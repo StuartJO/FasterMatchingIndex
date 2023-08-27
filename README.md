@@ -2,7 +2,7 @@
 
 This is code for computing the matching index much faster. This is of particular relevance for people using generative network models
 
-# So what is the problem?
+## So what is the problem?
 
 The matching index has often been found to give the best performance among topological generative network models (see here here here here and here), meaning that it is the model people are most interested in running.
 
@@ -14,19 +14,19 @@ This likely makes you sad
 
 But what if I told you there was a way to make it (somewhat) better
 
-# I'm interested now, why can it be made faster?
+## I'm interested now, why can it be made faster?
 
 To understand why it can be made faster, we need to think about how it is actually calculated. To do so, we need to talk maths (sorry).
 
 As it is most commonly written, the matching index is calculated on an adjacency matrix $A$ as follows:
 
-$$M_{ij} = \frac{N_{i\j}\cap N_{j\i}}{(N_{i\j}\cup N_{j\i}}$$
+$$M_{ij} = \frac{\Gamma_{i}-{j}\cap \Gamma_{j}-{i}}{(\Gamma_{i}-{j}\cup \Gamma_{j}-{i}}$$
 
-where $N_{i\j}$ is the number of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$)
+where $\Gamma_{i\j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$)
 
 This is equivalent to
 
-$$M_{ij} = \frac{2N_{ij}}{k_{i}+k_{j}-2A_{ij}$$
+$$M_{ij} = \frac{2N_{ij}}{k_{i}+k_{j}-2A_{ij}}$$
 
 which is just the number of neighbours $i$ and $j$ share (excluding themselves as neighbours of the other) multiplied by two, then dvided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$, thats what the $-2A_{ij}$ is for).
 
@@ -34,14 +34,14 @@ When written this way it becomes clearer how we can take advatage of matrix oper
 
 If you look at the original code provided in the BCT, you'll notice it is actually calculating it the second way and not the first. However it is looping over all the nodes to calculate it. We can actually forgo any loops when calculating this measure resulting in a considerable speed up in processing speed
 
-# So how much faster is it?
+## So how much faster is it?
 
 First, lets compare calculating the matching index on networks with different numbers of nodes:
 
 
 You can see that the old way takes significantly longer when computing the index than the new way, and this time only increases as the network gets larger! So the benefits of using the new code gets considerably better as the network gets larger
 
-# Yes that's neat Stuart, but what about its use in generative network models?
+## Yes that's neat Stuart, but what about its use in generative network models?
 
 An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes who will be affected by the newly added edge (i.e., the loop very likely doesn't need to be run over all nodes). 
 
@@ -56,19 +56,19 @@ If we directly compare the timings of the code as they progress over iterations 
 
 But in summary, no matter how you cut it, my new code is faster
 
-# I want to see this with my own eyes
+## I want to see this with my own eyes
 
 Easy! Just run the script I wrote to demonstrate this in MATLAB
 
 
 Note it does use the Parellel Computing Toolbox, just to speed things up a bit. It takes a bit over 30 minutes to run everything (using the Toolbox) on a i7 6700k FYI 
 
-# I would like to incorporate this into my own code, is there an easy way to do this?
+## I would like to incorporate this into my own code, is there an easy way to do this?
 
 Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is consistent with the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
 
 
-# Wow this is so great, you're amazing Stuart
+## Wow this is so great, you're amazing Stuart
 
 Thank you
 
