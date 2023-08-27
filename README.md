@@ -20,9 +20,9 @@ To understand why it can be made faster, we need to think about how it is actual
 
 As it is most commonly written, the matching index is calculated on an adjacency matrix $A$ as follows:
 
-$$M_{ij} = \frac{\Gamma_{i}-{j}\cap \Gamma_{j}-{i}}{(\Gamma_{i}-{j}\cup \Gamma_{j}-{i}}$$
+$$M_{ij} = \frac{\Gamma_{i}-{j}\cap \Gamma_{j}-{i}}{\Gamma_{i}-{j}\cup \Gamma_{j}-{i}}$$
 
-where $\Gamma_{i\j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$)
+where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$)
 
 This is equivalent to
 
