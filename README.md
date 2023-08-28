@@ -10,7 +10,7 @@ The matching index, as typically used, is a measure that quantifies the similari
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
-<sub>* See the [section below](#What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?) discussing how the matching index may not measure what we usually think it does...</sub>
+<sub>* See the [section below](#what-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does) discussing how the matching index may not measure what we usually think it does...</sub>
 
 ## So what is the problem?
 
@@ -42,7 +42,7 @@ When written this way it becomes clearer how we can take advatage of matrix oper
 
 If you look at the original code provided in the BCT, you'll notice it is actually calculating it the second way and not the first. However it is looping over all the nodes to calculate it. We can actually forgo any loops when calculating this measure resulting in a considerable speed up in processing speed
 
-<sub>* Again see the [section at the end](#What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?)</sub>
+<sub>* Again see the [section at the end](#what-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does)</sub>
 
 ## So how much faster is it?
 
@@ -95,11 +95,11 @@ The matching index is commonly considered a normalised measure of the overlap of
 
 Yet consider the network below:
 
-Node $i$ and $j$ share three neighbours. The combined total of (unique) neighbours $i$ and $j$ have is 10, so we would say the matching index is $frac{3}{10}$.
+Node $i$ and $j$ share three neighbours. The combined total of (unique) neighbours $i$ and $j$ have is 10, so we would say the matching index is $\frac{3}{10}$.
 
 We would _technically_ be incorrect however, or rather we would have a different answer to what the code provides.
 
-As mentioned above, the matching index is similartity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common. They have 13 connections in total (excluding the connection between them), so the matching index is $frac{6}{13}$. I would say that this definition isn't exactly consistent with Equation 1 (in my opinion, although I am not overly across set theory), but it is exactly how Equation 2 is done. However I would argue that this definition isn't the most intuitive. We can change Equation 2 to
+As mentioned above, the matching index is similartity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common. They have 13 connections in total (excluding the connection between them), so the matching index is $\frac{6}{13}$. I would say that this definition isn't exactly consistent with Equation 1 (in my opinion, although I am not overly across set theory), but it is exactly how Equation 2 is done. However I would argue that this definition isn't the most intuitive. We can change Equation 2 to
 
 (3) $$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}$$
 
