@@ -348,35 +348,144 @@ for i = 1:nNetSizes
     end
 end
 
+
 mean_time_new = mean(time_new,3);
 mean_time_old = mean(time_old,3);
 
-%disp(['Completed ,',num2str(iters),' networks, old method = ',num2str(mean(time_old)),' seconds, new method = ',num2str(mean(time_new)),' seconds'])
-figure
-yyaxis right
-plot(cumsum(t))
-ylabel('New code')
-
-yyaxis left
-plot(cumsum(t_))
-ylabel('Old code')
+AverageSpeedUp = mean_time_old./mean_time_new;
 
 figure
-boxplot([time_new time_old])
-AverageSpeedUp = mean(time_old)/mean(time_new);
-title(['Mean speed up = ',num2str(AverageSpeedUp)])
-ylabel('Time in seconds')
+imagesc(AverageSpeedUp)
+c = colorbar;
+xticks(1:5)
+yticks(1:5);
+
+xticklabels(NetEdges)
+yticklabels(NetSizes)
+xlabel('Number of edges')
+ylabel('Number of nodes')
+c.Label.String = 'Average speed up compared to old';
+set(gca,'FontSize',24,'Ydir','normal')
+
+%
 
 figure
 for i = 1:nNetSizes
     for j = 1:nNetEdges
-        subplot(nNetSizes,nNetEdges,sub2ind([nNetSizes nNetEdges],i,j))
-        plot(cumsum(mean(timecourse_new))); hold on; plot(cumsum(mean(timecourse_old)))
+        subplot(nNetSizes,nNetEdges,sub2ind([nNetSizes nNetEdges],j,i))
+        newtimes = mean(timecourse_new{i,j});
+        oldtimes = mean(timecourse_old{i,j});
+        plot(cumsum(newtimes)); hold on; plot(cumsum(oldtimes))
         xlabel('Iteration')
         ylabel('Cumulative time in seconds')
         legend('New code','Old code','Location','northwest')
+        title([num2str(NetSizes(i)),' nodes, ',num2str(NetEdges(j)),' edges'])
+        xlim([1 NetEdges(j)])
+        
+        mean_total_time_new(i,j) = sum(newtimes);
+        mean_total_time_old(i,j) = sum(oldtimes);
+        
+        ylim([0 max(mean_total_time_new(i,j),mean_total_time_old(i,j))])        
     end
 end
+
+AverageSpeedUpTotal = mean_total_time_old./mean_total_time_new;
+
+figure
+imagesc(AverageSpeedUpTotal)
+c = colorbar;
+xticks(1:5)
+yticks(1:5);
+
+xticklabels(NetEdges)
+yticklabels(NetSizes)
+xlabel('Number of edges')
+ylabel('Number of nodes')
+c.Label.String = 'Average speed up compared to old';
+set(gca,'FontSize',24,'Ydir','normal')
+
+save('matchingSpeedTestData6.mat')
+
+clear all
+
+
+
+%%
+%% Compare the matching generative network model with the old and new code
+
+NetSizes = [100 250 500 1000 2000];
+NetEdges = 500:500:2500;
+
+iters = 10;
+nNetSizes = length(NetSizes);
+nNetEdges = length(NetEdges);
+
+time_new = zeros(nNetSizes,iters);
+time_old = zeros(nNetSizes,iters);
+
+timecourse_new = cell(nNetSizes,1);
+timecourse_old = cell(nNetSizes,1);
+
+eta = -2;
+gam = .4;
+
+for i = 1:nNetSizes
+    
+    Nnodes = NetSizes(i);
+    a = zeros(Nnodes);
+    D = rand(Nnodes);
+    D = triu(D,1)+triu(D,1)';
+    Nedges = 2500;  
+        parfor k = 1:iters
+
+        tic
+        [B,b,t(k,:)] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+        time_new(i,k) = toc;
+
+        tic
+        [B_,b_,t_(k,:)] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+        time_old(i,k) = toc;
+        end  
+        timecourse_new{i} = t;
+        timecourse_old{i} = t_;
+        disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,:))),' seconds, new method = ',num2str(mean(time_new(i,:))),' seconds'])
+
+end
+
+%
+
+figure
+lgd = cell(1,nNetSizes*2);
+subplot(1,2,1)
+for i = 1:nNetSizes
+    newtimes = mean(timecourse_new{i});
+   oldtimes = mean(timecourse_old{i});
+   plot(cumsum(newtimes))
+   lgd{sub2ind([nNetSizes 2],i,1)} = ['New code,' num2str(NetSizes(i)),' nodes'];
+   hold on
+   plot(cumsum(newtimes),'--')
+   hold on
+   lgd{sub2ind([nNetSizes 2],i,2)} = ['Old code,' num2str(NetSizes(i)),' nodes'];
+end
+xlabel('Edges')
+ylabel('Cumulative time in seconds')
+legend(ldg,'NumColumns',nNetSizes,'Location','northwest')
+
+subplot(1,2,1)
+lgd = cell(1,nNetSizes);
+subplot(1,2,1)
+for i = 1:nNetSizes
+    newtimes = mean(timecourse_new{i});
+    oldtimes = mean(timecourse_old{i});
+   Improvement = oldtimes./newtimes;
+   plot(Improvement)
+   lgd{sub2ind([nNetSizes 1],i,1)} = [num2str(NetSizes(i)),' nodes'];
+   hold on
+end
+xlabel('Edges')
+ylabel('Average speed up compared to old')
+legend(ldg,'Location','northwest')
+
 
 save('matchingSpeedTestData6.mat')
 

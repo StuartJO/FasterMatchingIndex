@@ -6,7 +6,7 @@ This is code for computing the matching index much faster. This is of particular
 
 The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles*. The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
 
-(1) $$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}$$
+$$(1) M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}$$
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
@@ -20,9 +20,9 @@ _HOWEVER_
 
 It takes agesssssssssssssssssssssss to run (in my experience I could run ever single other topological model in the time it takes to run the matching model)
 
-This likely makes you sad
+This likely makes you sad :cry:
 
-But what if I told you there was a way to make it (somewhat) better
+But what if I told you there was a way to make it (somewhat) better...
 
 ## I'm interested now, why can it be made faster?
 
@@ -30,7 +30,7 @@ To understand why it can be made faster, we need to think about how it is actual
 
 We can also calculate the matching index as
 
-(2) $$M_{ij} = \frac{2(N_{ij}-A_{ij})}{k_{i}+k_{j}-2A_{ij}}$$
+$$(2) M_{ij} = \frac{2(N_{ij}-A_{ij})}{k_{i}+k_{j}-2A_{ij}}$$
 
 which is just the number of neighbours $i$ and $j$ share multiplied by two (whilst excluding themselves as neighbours of the other, thats what the $-A_{ij}$ is for), then dvided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$).
 
@@ -47,13 +47,23 @@ You can see that the old way takes significantly longer when computing the index
 
 ## Yes that's neat Stuart, but what about its use in generative network models?
 
-An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes who will be affected by the newly added edge (i.e., the loop very likely doesn't need to be run over all nodes). 
+An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes who will be affected by the newly added edge i.e., the loop very likely doesn't need to be run over all nodes. So because of this we won't see the some order of magnitude levels of improvement. But what improvement do we see? First lets just calculate the atching index using networks of a similar size and density I used in my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127). I generated 100 different models with the old and new code and compared the time it takes to compute them:
 
 
+A fourfold increase is not bad!
 
-You'll notice as the number of edges increases, the improvement of the new codes lessens (but it is still better). The reason for this is simple. When the generative model starts, it initalises a topology matrix. In other words, at very beginning it needs to run the matching index for the entire network. As I demonstrated earlier, this is wehere the new code will result in fairly massive improvements. If we remove this factor however (by initalising the topology matrix the same way in the new and old code), we still see a benefit!
+## Ok, How does this change as a factor of the size of the network and the number of edges being requested?
+
+Below I generated networks of size 
+
+You'll notice as the number of nodes increases, the new code consistently improves. One reason for this is when the generative model starts, it initalises a topology matrix. In other words, at very beginning it needs to run the matching index for the entire network. As I demonstrated earlier, this is where the new code will result in fairly massive improvements. If we remove this factor however (by initalising the topology matrix the exact same way in the new and old code), we still see a benefit (just not quite as much):
+
+You will also notice, as the number of edges increases, the improvement of the new codes lessens (but it is much still better). To try to better understand why the impact of the new code lessens as more edges are added we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the the improvement varies: 
 
 
+I am not completely sure as to why the improvement lessens over time, 
+
+From my testing, while the improvement of the new code may lessen as more edges need to be generated, this is only slight. You can still expect sizeable benefits to using the new code!
 
 If we directly compare the timings of the code as they progress over iterations of the model (timings have been normalised in the plot below), we can see that as the old code progresses it gets slower, this is because there will be more neighbours to iterate over at later steps (because the network is forming)
 
@@ -84,7 +94,7 @@ We would _technically_ be incorrect however, or rather we would have a different
 
 As mentioned above, the matching index is similartity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the black edges, not the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$. I would say that this definition isn't exactly consistent with Equation 1 (in my opinion, although I am not overly across set theory), but it is exactly how Equation 2 is done. However I would argue that this definition (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
-(3) $$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}$$
+$$(3) M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}$$
 
 ## Do these differing conceptualisations affect anything?
 
@@ -101,6 +111,10 @@ Thank you
 ## Who should I cite for this implementation?
 
 Please just reference this GitHub, there is no paper attached to this new code (however I really won't object to you [citing my work in this space at all](https://www.science.org/doi/10.1126/sciadv.abm6127)).  
+
+## Who should I direct questions to if I have questions/complaints? 
+
+You can email me at stuart.oldham@mcri.edu.au
 
 ## Is there a Python version?
 
