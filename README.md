@@ -10,7 +10,7 @@ The matching index, as typically used, is a measure that quantifies the similari
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
-<sub>* See the [section below](##What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?) discussing how the matching index may not measure what we usually think it does...</sub>
+<sub>* See the [section below](#What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?) discussing how the matching index may not measure what we usually think it does...</sub>
 
 ## So what is the problem?
 
@@ -42,7 +42,7 @@ When written this way it becomes clearer how we can take advatage of matrix oper
 
 If you look at the original code provided in the BCT, you'll notice it is actually calculating it the second way and not the first. However it is looping over all the nodes to calculate it. We can actually forgo any loops when calculating this measure resulting in a considerable speed up in processing speed
 
-<sub>* Again see the [section at the end](##What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?)</sub>
+<sub>* Again see the [section at the end](#What-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does?)</sub>
 
 ## So how much faster is it?
 
