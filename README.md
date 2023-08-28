@@ -6,7 +6,7 @@ This is code for computing the matching index much faster. This is of particular
 
 The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles*. The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
 
-$$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}\label{eq1}$$
+$$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}\tag {1}$$
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
