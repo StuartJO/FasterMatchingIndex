@@ -6,7 +6,7 @@ This is code for computing the matching index much faster. This is of particular
 
 The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles*. The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
 
-$$(1) M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}$$
+$$(1)      M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}$$
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
@@ -30,7 +30,7 @@ To understand why it can be made faster, we need to think about how it is actual
 
 We can also calculate the matching index as
 
-$$(2) M_{ij} = \frac{2(N_{ij}-A_{ij})}{k_{i}+k_{j}-2A_{ij}}$$
+$$(2)      M_{ij} = \frac{2(N_{ij}-A_{ij})}{k_{i}+k_{j}-2A_{ij}}$$
 
 which is just the number of neighbours $i$ and $j$ share multiplied by two (whilst excluding themselves as neighbours of the other, thats what the $-A_{ij}$ is for), then dvided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$).
 
@@ -94,7 +94,7 @@ We would _technically_ be incorrect however, or rather we would have a different
 
 As mentioned above, the matching index is similartity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the black edges, not the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$. I would say that this definition isn't exactly consistent with Equation 1 (in my opinion, although I am not overly across set theory), but it is exactly how Equation 2 is done. However I would argue that this definition (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
-$$(3) M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}$$
+$$(3)      M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}$$
 
 ## Do these differing conceptualisations affect anything?
 
