@@ -459,18 +459,17 @@ maxKS_new = zeros(iters,1);
 maxKS_old = zeros(iters,1);
 
 parfor i = 1:iters
-
 tic
-[B,b] = gen_model_mult(seed,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+B_ = gen_model_mult(seed,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
 time_new(i) = toc;
+[maxKS_new(i)] = calc_maxKS(A_vals,D,B_); 
+end
 
+parfor i = 1:iters
 tic
-[B_,b_] = gen_model_mult_old(seed,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
-time_old(i) = toc;
-
-[maxKS_new(i)] = calc_maxKS(A_vals,D,B);
-[maxKS_old(i)] = calc_maxKS(A_vals,D,B_);
-
+B = gen_model_mult_old(seed,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+time_old(i) = toc;    
+[maxKS_old(i)] = calc_maxKS(A_vals,D,B);
 end
 
 figure
@@ -486,6 +485,6 @@ boxplot([maxKS_new maxKS_old])
 xticklabels({'New code','Old code'})
 ylabel('Model fit')
 
-save('matchingSpeedTestData2_.mat')
-
+save('matchingSpeedTestData2.mat')
+% 
 clear all

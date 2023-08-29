@@ -439,13 +439,13 @@ for ii = (mseed + 1):m
     b(ii) = r;
     uu = u(r);
     vv = v(r);
-    
+
     x = A(uu,:);
     y = A(vv,:);
     
     A(uu,vv) = 1;
     A(vv,uu) = 1;
-    
+        
     nei(uu,y) = nei(uu,y) + 1;
     nei(y,uu) = nei(y,uu) + 1;
     nei(vv,x) = nei(vv,x) + 1;

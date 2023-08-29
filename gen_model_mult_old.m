@@ -80,7 +80,7 @@ function [B,b] = gen_model_mult_old(A,PD,m,modeltype,modelvar,PDexpo,gam,epsilon
 %   Richard Betzel, Indiana University/University of Pennsylvania, 2015
 
 if ~exist('epsilon','var')
-    epsilon = 1e-5;
+    epsilon = 1e-6;
 end
 
 n = length(A);
@@ -421,6 +421,9 @@ end
 b = indx(b);
 
 function b = fcn_matching(A,K,Fd,m,gam,modelvar,epsilon)
+
+A = A>0;
+
 K = K + epsilon;
 n = length(Fd);
 mseed = nnz(A)/2;

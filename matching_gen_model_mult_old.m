@@ -80,7 +80,7 @@ function [B,b,t] = matching_gen_model_mult_old(A,PD,m,modelvar,PDexpo,gam,epsilo
 %   Richard Betzel, Indiana University/University of Pennsylvania, 2015
 
 if ~exist('epsilon','var')
-    epsilon = 1e-5;
+    epsilon = 1e-6;
 end
 
 n = length(A);
