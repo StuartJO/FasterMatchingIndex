@@ -1,6 +1,6 @@
 %% Compare the matching index with different numbers of nodes and a consistent density
-
-
+run = 0;
+if run == 1
 
 Iters = 10;
 
@@ -68,8 +68,6 @@ clear all
 
 %% Compare the matching generative network model with the old and new code
 
-
-
 % Set up a network
 
 Nnodes = 100;
@@ -118,8 +116,6 @@ save('matchingSpeedTestData2.mat')
 
 clear all
 %% Compare the matching generative network model with different number of nodes and edges
-
-
 
 NetSizes = 100:100:500;
 NetEdges = 250:250:1250;
@@ -243,174 +239,8 @@ save('matchingSpeedTestData4.mat')
 
 clear all
 
-%% Compare the matching generative network model with the old and new code
-
-% Set up a network
-
-Nnodes = 100;
-a = zeros(Nnodes);
-
-% Make a pretend distance matrix. We don't need a real one because this is
-% a test of speed. 
-r = rand(Nnodes);
-D = triu(r,1)+triu(r,1)';
-
-% Number of edges to generate. I chose 650 because that is a similar number
-% to real world brain networks using a 100 node parcellation in one
-% hemisphere
-Nedges = 4950;
-
-% Number of iterations to perform
-iters = 1;
-time_new = zeros(iters,1);
-time_old = zeros(iters,1);
-
-eta = -2;
-gam = .4;
-
-for i = 1:iters
-
-tic
-[B,b,t] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
-time_new(i) = toc;
-
-tic
-[B_,b_,t_] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
-time_old(i) = toc;
-
 end
 
-%disp(['Completed ,',num2str(iters),' networks, old method = ',num2str(mean(time_old)),' seconds, new method = ',num2str(mean(time_new)),' seconds'])
-figure
-yyaxis right
-plot(cumsum(t))
-ylabel('New code')
-
-yyaxis left
-plot(cumsum(t_))
-ylabel('Old code')
-
-figure
-boxplot([time_new time_old])
-AverageSpeedUp = mean(time_old)/mean(time_new);
-title(['Mean speed up = ',num2str(AverageSpeedUp)])
-ylabel('Time in seconds')
-
-save('matchingSpeedTestData5.mat')
-
-clear all
-
-%% Compare the matching generative network model with the old and new code
-
-NetSizes = 100:100:500;
-NetEdges = 250:250:1250;
-
-iters = 10;
-nNetSizes = length(NetSizes);
-nNetEdges = length(NetEdges);
-
-time_new = zeros(nNetSizes,nNetEdges);
-time_old = zeros(nNetSizes,nNetEdges);
-
-timecourse_new = cell(nNetSizes,nNetEdges);
-timecourse_old = cell(nNetSizes,nNetEdges);
-
-eta = -2;
-gam = .4;
-
-for i = 1:nNetSizes
-    
-    Nnodes = NetSizes(i);
-    a = zeros(Nnodes);
-    D = rand(Nnodes);
-    D = triu(D,1)+triu(D,1)';
-
-    for j = 1:nNetEdges
-        Nedges = NetEdges(j);
-        
-        t = zeros(iters,Nedges);
-        t_ = zeros(iters,Nedges);
-      
-        parfor k = 1:iters
-
-        tic
-        [B,b,t(k,:)] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
-        time_new(i,j,k) = toc;
-
-        tic
-        [B_,b_,t_(k,:)] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
-        time_old(i,j,k) = toc;
-        end  
-        timecourse_new{i,j} = t;
-        timecourse_old{i,j} = t_;
-        disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,j,:))),' seconds, new method = ',num2str(mean(time_new(i,j,:))),' seconds'])
-        
-    end
-end
-
-
-mean_time_new = mean(time_new,3);
-mean_time_old = mean(time_old,3);
-
-AverageSpeedUp = mean_time_old./mean_time_new;
-
-figure
-imagesc(AverageSpeedUp)
-c = colorbar;
-xticks(1:5)
-yticks(1:5);
-
-xticklabels(NetEdges)
-yticklabels(NetSizes)
-xlabel('Number of edges')
-ylabel('Number of nodes')
-c.Label.String = 'Average speed up compared to old';
-set(gca,'FontSize',24,'Ydir','normal')
-
-%
-
-figure
-for i = 1:nNetSizes
-    for j = 1:nNetEdges
-        subplot(nNetSizes,nNetEdges,sub2ind([nNetSizes nNetEdges],j,i))
-        newtimes = mean(timecourse_new{i,j});
-        oldtimes = mean(timecourse_old{i,j});
-        plot(cumsum(newtimes)); hold on; plot(cumsum(oldtimes))
-        xlabel('Iteration')
-        ylabel('Cumulative time in seconds')
-        legend('New code','Old code','Location','northwest')
-        title([num2str(NetSizes(i)),' nodes, ',num2str(NetEdges(j)),' edges'])
-        xlim([1 NetEdges(j)])
-        
-        mean_total_time_new(i,j) = sum(newtimes);
-        mean_total_time_old(i,j) = sum(oldtimes);
-        
-        ylim([0 max(mean_total_time_new(i,j),mean_total_time_old(i,j))])        
-    end
-end
-
-AverageSpeedUpTotal = mean_total_time_old./mean_total_time_new;
-
-figure
-imagesc(AverageSpeedUpTotal)
-c = colorbar;
-xticks(1:5)
-yticks(1:5);
-
-xticklabels(NetEdges)
-yticklabels(NetSizes)
-xlabel('Number of edges')
-ylabel('Number of nodes')
-c.Label.String = 'Average speed up compared to old';
-set(gca,'FontSize',24,'Ydir','normal')
-
-save('matchingSpeedTestData6.mat')
-
-clear all
-
-
-
-%%
 %% Compare the matching generative network model with the old and new code
 
 NetSizes = [100 250 500 1000 2000];
@@ -448,58 +278,203 @@ for i = 1:nNetSizes
         end  
         timecourse_new{i} = t;
         timecourse_old{i} = t_;
-        disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,j,:))),' seconds, new method = ',num2str(mean(time_new(i,j,:))),' seconds'])
+        disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,:))),' seconds, new method = ',num2str(mean(time_new(i,:))),' seconds'])
 
 end
-
-
-mean_time_new = mean(time_new,2);
-mean_time_old = mean(time_old,2);
-
-AverageSpeedUp = mean_time_old./mean_time_new;
-
-figure
-imagesc(AverageSpeedUp)
-c = colorbar;
-xticks(1:5)
-yticks(1:5);
-
-xticklabels(NetEdges)
-yticklabels(NetSizes)
-xlabel('Number of edges')
-ylabel('Number of nodes')
-c.Label.String = 'Average speed up compared to old';
-set(gca,'FontSize',24,'Ydir','normal')
 
 %
 
 figure
-for i = 1:nNetSizes
-   plot 
-    
-end
+lgd = cell(1,nNetSizes*2);
+subplot(1,2,1)
+
+lines_cmap = lines(nNetSizes);
 
 for i = 1:nNetSizes
-    for j = 1:nNetEdges
-        subplot(1,nNetSizes,i)
-        newtimes = mean(timecourse_new{i,j});
-        oldtimes = mean(timecourse_old{i,j});
-        plot(cumsum(newtimes)); hold on; plot(cumsum(oldtimes))
-        xlabel('Iteration')
-        ylabel('Cumulative time in seconds')
-        legend('New code','Old code','Location','northwest')
-        title([num2str(NetSizes(i)),' nodes, ',num2str(NetEdges(j)),' edges'])
-        xlim([1 NetEdges(j)])
-        
-        mean_total_time_new(i,j) = sum(newtimes);
-        mean_total_time_old(i,j) = sum(oldtimes);
-        
-        ylim([0 max(mean_total_time_new(i,j),mean_total_time_old(i,j))])        
-    end
+    newtimes = mean(timecourse_new{i});
+   oldtimes = mean(timecourse_old{i});
+   plot(cumsum(newtimes),'-','Color',lines_cmap(i,:),'LineWidth',2)
+   lgd{sub2ind([2 nNetSizes],1,i)} = ['New code (' num2str(NetSizes(i)),')'];
+   hold on
+   plot(cumsum(oldtimes),'--','Color',lines_cmap(i,:),'LineWidth',2)
+   lgd{sub2ind([2 nNetSizes],2,i)} = ['Old code (' num2str(NetSizes(i)),')'];
+end
+xlabel('Edges')
+ylabel('Cumulative time in seconds')
+legend(gca,lgd,'NumColumns',2,'Location','southeast','FontSize',14)
+set(gca,'FontSize',18)
+set(gca, 'YScale', 'log')
+
+subplot(1,2,2)
+lgd2 = cell(1,nNetSizes);
+for i = 1:nNetSizes
+    newtimes = mean(timecourse_new{i});
+    oldtimes = mean(timecourse_old{i});
+   Improvement = oldtimes./newtimes;
+   plot(Improvement,'Color',lines_cmap(i,:),'LineWidth',2)
+   lgd2{sub2ind([nNetSizes 1],i,1)} = [num2str(NetSizes(i)),' nodes'];
+   hold on
+end
+xlabel('Edges')
+ylabel('Average speed up compared to old')
+legend(gca,lgd2,'NumColumns',1,'Location','northeast','FontSize',14)
+set(gca,'FontSize',18)
+
+save('matchingSpeedTestData5.mat')
+
+clear all
+
+%% Compare the matching generative network model with the old and new code
+
+% Set up a network
+
+Nnodes = 100;
+a = zeros(Nnodes);
+
+% Make a pretend distance matrix. We don't need a real one because this is
+% a test of speed. 
+r = rand(Nnodes);
+D = triu(r,1)+triu(r,1)';
+
+% Number of edges to generate. I chose 650 because that is a similar number
+% to real world brain networks using a 100 node parcellation in one
+% hemisphere
+Nedges = 4950;
+
+% Number of iterations to perform
+iters = 10;
+time_new = zeros(iters,1);
+time_old = zeros(iters,1);
+
+eta = -2;
+gam = .4;
+
+t = zeros(iters,Nedges);
+t_ = zeros(iters,Nedges);
+
+parfor i = 1:iters
+
+tic
+[B,b,t(i,:)] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+time_new(i) = toc;
+
+tic
+[B_,b_,t_(i,:)] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+time_old(i) = toc;
+
 end
 
+%disp(['Completed ,',num2str(iters),' networks, old method = ',num2str(mean(time_old)),' seconds, new method = ',num2str(mean(time_new)),' seconds'])
+% figure
+% yyaxis right
+% plot(cumsum(t))
+% ylabel('New code')
+% 
+% yyaxis left
+% plot(cumsum(t_))
+% ylabel('Old code')
+
+figure
+plot(cumsum(t,2)','Color','b')
+hold on
+plot(cumsum(t_,2)','Color','r')
+ylabel('Old code')
+
+smoothed_cumsum_t = movmean(cumsum(mean(t)),100);
+smoothed_cumsum_t_ = movmean(cumsum(mean(t_)),100);
+
+plot(smoothed_cumsum_t)
+hold on
+plot(smoothed_cumsum_t_)
+
+plot(smoothed_cumsum_t_./smoothed_cumsum_t)
 
 
 save('matchingSpeedTestData6.mat')
+
+clear all
+
+Nnodes = 500;
+a = zeros(Nnodes);
+
+% Make a pretend distance matrix. We don't need a real one because this is
+% a test of speed. 
+r = rand(Nnodes);
+D = triu(r,1)+triu(r,1)';
+
+% Number of edges to generate. I chose 650 because that is a similar number
+% to real world brain networks using a 100 node parcellation in one
+% hemisphere
+Nedges = 124750;
+
+% Number of iterations to perform
+
+eta = -2;
+gam = .4;
+
+[B,b,timecourse_new] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+
+[B_,b_,timecourse_old] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+
+
+save('matchingSpeedTestData7.mat')
+
+%%
+
+%% Compare the matching generative network model with the old and new code
+
+% Set up a network
+
+Nnodes = 100;
+a = zeros(Nnodes);
+
+% Make a pretend distance matrix. We don't need a real one because this is
+% a test of speed. 
+r = rand(Nnodes);
+D = A_dist;
+
+% Number of edges to generate. I chose 650 because that is a similar number
+% to real world brain networks using a 100 node parcellation in one
+% hemisphere
+
+Nedges = nnz(adjs{1})/2;
+
+% Number of iterations to perform
+iters = 100;
+time_new = zeros(iters,1);
+time_old = zeros(iters,1);
+
+eta = -0.0663620917068697;
+gam = 0.268238489046537;
+
+A_vals{1} = sum(A,2);
+A_vals{2} = clustering_coef_bu(A);
+A_vals{3} = betweenness_bin(A)';
+A_vals{4} = D(triu(A,1) > 0);
+
+parfor i = 1:iters
+
+tic
+[B,b] = gen_model_mult(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+time_new(i) = toc;
+
+tic
+[B_,b_] = gen_model_mult_old(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+time_old(i) = toc;
+
+[maxKS] = calc_maxKS(A,D,B,customOrMatlab)
+
+end
+
+disp(['Completed ,',num2str(iters),' networks, old method = ',num2str(mean(time_old)),' seconds, new method = ',num2str(mean(time_new)),' seconds'])
+        
+
+figure
+boxplot([time_new time_old])
+AverageSpeedUp = mean(time_old)/mean(time_new);
+title(['Mean speed up = ',num2str(AverageSpeedUp)])
+ylabel('Time in seconds')
+
+save('matchingSpeedTestData2_.mat')
 
 clear all

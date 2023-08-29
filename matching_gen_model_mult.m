@@ -208,14 +208,14 @@ for ii = (mseed + 1):m
     
     switch mv2
         case 'powerlaw'
-            K_update = ((2 * nei(all_nei,:) ./ ( (degmat_sum(all_nei,:)<=2 & nei(all_nei,:)~=1)+(degmat_sum(all_nei,:) - (A(all_nei,:) * 2)) ) ) + epsilon);
+            %K_update = ((2 * nei(all_nei,:) ./ ( (degmat_sum(all_nei,:)<=2 & nei(all_nei,:)~=1)+(degmat_sum(all_nei,:) - (A(all_nei,:) * 2)) ) ) + epsilon);
             Fk_update = ( (2 * nei(all_nei,:) ./ ( (degmat_sum(all_nei,:)<=2 & nei(all_nei,:)~=1)+(degmat_sum(all_nei,:) - (A(all_nei,:) * 2)) ) ) + epsilon).^gam;
         case 'exponential'
             Fk_update = exp(( (2 * nei(all_nei,:) ./ ( (degmat_sum(all_nei,:)<=2 & nei(all_nei,:)~=1)+(degmat_sum(all_nei,:) - (A(all_nei,:) * 2)) ) ) + epsilon)*gam);
     end
-    K(all_nei,:) = K_update; 
+    %K(all_nei,:) = K_update; 
     Fk(all_nei,:) = Fk_update;    
-    K(:,all_nei) = K_update'; 
+    %K(:,all_nei) = K_update'; 
     Fk(:,all_nei) = Fk_update';  
     
     Ff = Fd.*Fk.*~A;
