@@ -88,7 +88,7 @@ if iscell(PDMs) || size(PDMs,3) > 1
         end
     else
           PD = squeeze(PDMs(:,:,2));
-            D = squeeze(PDMs(:,:,1));
+          D = squeeze(PDMs(:,:,1));
           
     end
 else
