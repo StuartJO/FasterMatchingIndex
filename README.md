@@ -60,25 +60,19 @@ Below I generated networks of different node sizes and edge counts:
 
 ![Heat-map showing the speed-up factor of the new code vs old code for networks of different sizes (in both nodes and edge count)](./images/MatchingDemo3.svg) 
 
-You'll notice as the number of nodes increases, the new code gives bigger and bigger benefits. One reason for this is when the generative model starts, it initialises a topology matrix. In other words, at very beginning it needs to run the matching index for the entire network. As I demonstrated earlier, this is where the new code will result in massive improvements. If we remove this factor however (by initialising the topology matrix the exact same way in the new and old code), we still see a benefit (just not quite as much):
+You'll notice as the number of nodes increases, the new code gives bigger and bigger benefits. You will also notice, as the number of edges increases, the improvement of the new codes lessens (but it is much still better). To try to better understand why the impact of the new code lessens as more edges are added we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
 
-![Heat-map showing the speed-up factor of the new code vs old code for networks of different sizes (in both nodes and edge count). This is a fairer comparison as the old code isn't substantially disadvantaged by having to initialise a topological matrix the original way](./images/MatchingDemo4.svg) 
+![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo4.svg) 
 
-You will also notice, as the number of edges increases, the improvement of the new codes lessens (but it is much still better). To try to better understand why the impact of the new code lessens as more edges are added we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
-
-
-
-![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo5.svg) 
-
-It might be something to do with it approaching the maximum number of edges a network can have? If we see what happens when we generate all 4950 edges for a network of size 100 we get:
+Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. I thought this might be occuring as a factor of network density, so I went to two extremes. First I generated all 4950 edges for a network of size 100
 
 
-If we try a generate a network with 500 nodes and all 124750 edges:
+Then I generated all 124750 edges for a network of size 500:
 
 So there is some threshold
 
 
-I am not completely sure as to why the improvement lessens over time (but be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is much faster.
+I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
 
 ## I want to see this with my own eyes
 
@@ -88,9 +82,9 @@ Easy! Just run the script I wrote to demonstrate this in MATLAB
 matchingSpeedTest.m
 ```
 
-Note it does use the Parallel Computing Toolbox, just to speed things up a bit. It still takes well over 2 hours to run everything when using the Toolbox on a i7 6700k FYI 
+Note it does use the Parallel Computing Toolbox, just to speed things up a bit. It still takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI 
 
-## What did you mean when you said the matching index may not measure what I think it does?
+## What did you mean when you said the matching index may not measure precisely what I think it does?
 
 The matching index is commonly considered a normalised measure of the overlap of two nodes' neighbourhoods. Conceptually, we would understand this as meaning the number of shared neighbours divided by the total unique neighbours, as the original mathematical definition shown in Equation 1 suggests.
 
@@ -124,7 +118,7 @@ Thank you, I appreciate it.
 
 ## Who or what should I cite for this implementation?
 
-Please just reference this GitHub, there is no paper attached to this new code (however I really won't object to you [citing my work in this space at all](https://www.science.org/doi/10.1126/sciadv.abm6127)).  
+This code is built off of [Betzel 2016](https://doi.org/10.1016/j.neuroimage.2015.09.041) and my own [paper](https://www.science.org/doi/10.1126/sciadv.abm6127), you can also references this GitHub.
 
 ## Who should I contact if I have questions/complaints? 
 

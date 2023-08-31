@@ -163,8 +163,7 @@ switch modeltype
         b = fcn_nghbrs(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
 
     case 'matching'
-        Kseed = matching_ind(A);
-        Kseed = Kseed + Kseed';
+        Kseed = matching_ind_und(A);
         b = fcn_matching(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
 
     case 'sptl'
@@ -573,9 +572,9 @@ mv1 = modelvar{1};
 % the eta parameter
 switch mv1
     case 'powerlaw'
-        Fd = D.^eta;
+        Df = D.^eta(1);
     case 'exponential'
-        Fd = exp(eta*D);
+        Df = exp(eta(1)*D);
 end
 
 % Get the second element of the input cell array modelvar. This will either
@@ -591,7 +590,7 @@ switch mv2
         Fk = exp(gam*K);
 end
 
-mv2 = modelvar{3};
+mv3 = modelvar{2};
 
 switch mv3
     case 'powerlaw'

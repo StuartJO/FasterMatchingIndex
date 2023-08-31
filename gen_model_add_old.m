@@ -163,8 +163,7 @@ switch modeltype
         b = fcn_nghbrs(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
 
     case 'matching'
-        Kseed = matching_ind(A);
-        Kseed = Kseed + Kseed';
+        Kseed = matching_ind_und(A);
         b = fcn_matching(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
 
     case 'sptl'
@@ -557,7 +556,7 @@ n = length(D);
 mseed = nnz(A)/2;
 mv1 = modelvar{1};
 mv2 = modelvar{2};
-mv3 = modelvar{3};
+mv3 = modelvar{2};
 
 [u,v] = find(triu(ones(n),1));
 indx = (v - 1)*n + u;
