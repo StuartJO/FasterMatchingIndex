@@ -1,4 +1,4 @@
-function [B,b] = gen_model_add_old(A,PDMs,m,modeltype,modelvar,eta,gam,alpha,normType,epsilon)
+function [B,b] = gen_model_add_normmax(A,PDMs,m,modeltype,modelvar,eta,gam,alpha,epsilon)
 % gen_model_add_normmax          Run generative model code for the additive
 % model normalising by the max for each term
 %
@@ -28,9 +28,6 @@ function [B,b] = gen_model_add_old(A,PDMs,m,modeltype,modelvar,eta,gam,alpha,nor
 %                       first PD matrix (should set to 1), alpha(2) is the
 %                       value for the topology term, and alpha(3) is for
 %                       the second PD matrix
-%           normType,   either 'max' or 'sum', this will be the type of
-%                       normalisation performed within each respective
-%                       term. The default is 'max'
 %           epsilon,    the baseline probability of forming a particular
 %                       connection (should be a very small number
 %                       {default = 0}).
@@ -72,10 +69,6 @@ if ~exist('epsilon','var')
     epsilon = 0;
 end
 
-if ~exist('normType','var')
-    normType = 'max';
-end
-    
 if iscell(PDMs) || size(PDMs,3) > 1
     
     if iscell(PDMs)
@@ -111,74 +104,75 @@ switch modeltype
     case 'clu-avg'
         clu = clustering_coef_bu(A);
         Kseed = bsxfun(@plus,clu(:,ones(1,n)),clu')/2;
-        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'clu-diff'
         clu = clustering_coef_bu(A);
         Kseed = abs(bsxfun(@minus,clu(:,ones(1,n)),clu'));
-        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'clu-max'
         clu = clustering_coef_bu(A);
         Kseed = bsxfun(@max,clu(:,ones(1,n)),clu');
-        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'clu-min'
         clu = clustering_coef_bu(A);
         Kseed = bsxfun(@min,clu(:,ones(1,n)),clu');
-        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'clu-prod'
         clu = clustering_coef_bu(A);
         Kseed = clu*clu';
-        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_clu(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'deg-avg'
         kseed = sum(A,2);
         Kseed = bsxfun(@plus,kseed(:,ones(1,n)),kseed')/2;
-        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'deg-diff'
         kseed = sum(A,2);
         Kseed = abs(bsxfun(@minus,kseed(:,ones(1,n)),kseed'));
-        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'deg-max'
         kseed = sum(A,2);
         Kseed = bsxfun(@max,kseed(:,ones(1,n)),kseed');
-        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'deg-min'
         kseed = sum(A,2);
         Kseed = bsxfun(@min,kseed(:,ones(1,n)),kseed');
-        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'deg-prod'
         kseed = sum(A,2);
         Kseed = (kseed*kseed').*~eye(n);
-        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_deg(modeltype,A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'neighbors'
         Kseed = (A*A).*~eye(n);
-        b = fcn_nghbrs(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_nghbrs(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'matching'
         Kseed = matching_ind_und(A);
-        b = fcn_matching(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        %Kseed = Kseed + Kseed';
+        b = fcn_matching(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'sptl'
-        b = fcn_sptl(A,D,m,eta,modelvar,PD,alpha,normType);
+        b = fcn_sptl(A,D,m,eta,modelvar,PD,alpha);
 
     case 'com'
         Kseed = gexpm(A);
-        b = fcn_com(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType);
+        b = fcn_com(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 end
 
 B = zeros(n);
 B(b) = 1;
 B = B + B';
 
-function b = fcn_clu(modeltype,A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType)
+function b = fcn_clu(modeltype,A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha)
 K = K + epsilon;
 
 n = length(D);
@@ -210,12 +204,7 @@ switch mv3
         PDf = exp(eta(2)*(PD));    
 end
 
-switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-end
+Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
 
 switch mv2
     case 'powerlaw'
@@ -224,13 +213,7 @@ switch mv2
         Kf = exp(gam*K);    
 end
 Kf(isinf(Kf)) = 0;
-switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-end
-
+Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
 
 c = clustering_coef_bu(A);
@@ -289,12 +272,7 @@ for i = (mseed + 1):m
             K(:,bth) = (c*c(bth,:)') + epsilon;
     end
     
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
+    Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
     
     switch mv2
         case 'powerlaw'
@@ -303,12 +281,7 @@ for i = (mseed + 1):m
             Kf = exp(gam*K);    
     end
     Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+    Fk = alpha(2)*(Kf./max(max(Kf.*~A)));
     Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
     Ff = (Fd+Fk).*~A;
     P = Ff(indx);
@@ -317,7 +290,7 @@ end
 b = indx(b);
 
 
-function b = fcn_deg(modeltype,A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType)
+function b = fcn_deg(modeltype,A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha)
 n = length(D);
 mseed = nnz(A)/2;
 k = sum(A,2);
@@ -348,13 +321,7 @@ switch mv3
         PDf = exp(eta(2)*(PDind));    
 end
 
-switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(~EdgesTriu))) + alpha(3)*(PDf./max(PDf(~EdgesTriu)));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(~EdgesTriu))) + alpha(3)*(PDf./sum(PDf(~EdgesTriu)));        
-end
-
+Fd = alpha(1)*(Df./max(Df(~EdgesTriu))) + alpha(3)*(PDf./max(PDf(~EdgesTriu)));
 
 K = K + epsilon;
 
@@ -365,12 +332,7 @@ switch mv2
         Kf = exp(gam*K);    
 end
 Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
     
     
@@ -414,14 +376,8 @@ for i = (mseed + 1):m
     
     b(i) = r;
     EdgesTriu(b(i)) = 1;
-        
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(~EdgesTriu))) + alpha(3)*(PDf./max(PDf(~EdgesTriu)));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(~EdgesTriu))) + alpha(3)*(PDf./sum(PDf(~EdgesTriu)));        
-    end
     
+    Fd = alpha(1)*(Df./max(Df(~EdgesTriu))) + alpha(3)*(PDf./max(PDf(~EdgesTriu)));
     switch mv2
         case 'powerlaw'
             Kf = K.^gam;
@@ -429,12 +385,7 @@ for i = (mseed + 1):m
             Kf = exp(gam*K);    
     end
     Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+    Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
     Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
     P = Fd+Fk(indx);
 
@@ -443,7 +394,7 @@ for i = (mseed + 1):m
 end
 b = indx(b);
 
-function b = fcn_nghbrs(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType)
+function b = fcn_nghbrs(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha)
 K = K + epsilon;
 
 n = length(D);
@@ -473,14 +424,7 @@ switch mv3
     case 'exponential'       
         PDf = exp(eta(2)*(PD));    
 end
-
-switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-end
-
+Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
 switch mv2
     case 'powerlaw'
         Kf = K.^gam;
@@ -488,12 +432,7 @@ switch mv2
         Kf = exp(gam*K);    
 end
 Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
 Ff = (Fd+Fk).*~A;
 
@@ -515,14 +454,8 @@ for i = (mseed + 1):m
     K(y,uu) = K(y,uu) + 1;
     K(vv,x) = K(vv,x) + 1;
     K(x,vv) = K(x,vv) + 1;
-
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
     
+    Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
     switch mv2
         case 'powerlaw'
             Kf = K.^gam;
@@ -530,14 +463,7 @@ for i = (mseed + 1):m
             Kf = exp(gam*K);    
     end
     Kf(isinf(Kf)) = 0;
-    
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
-    
+    Fk = alpha(2)*(Kf./max(max(Kf.*~A)));
     Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
     
     Ff = Fd + Fk;
@@ -549,14 +475,14 @@ for i = (mseed + 1):m
 end
 b = indx(b);
 
-function b = fcn_matching(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType)
+function b = fcn_matching(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha)
 K = K + epsilon;
 
 n = length(D);
 mseed = nnz(A)/2;
 mv1 = modelvar{1};
 mv2 = modelvar{2};
-mv3 = modelvar{2};
+mv3 = modelvar{3};
 
 [u,v] = find(triu(ones(n),1));
 indx = (v - 1)*n + u;
@@ -578,28 +504,17 @@ switch mv3
     case 'exponential'       
         PDf = exp(eta(2)*(PD));    
 end
-switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-end
-
+Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
 switch mv2
     case 'powerlaw'
-        Fk = K.^gam;
+        Kf = K.^gam;
     case 'exponential'       
-        Fk = exp(gam*K);    
+        Kf = exp(gam*K);    
 end
-Fk(isinf(Fk)) = 0;
-    switch normType
-    case 'max'
-        TopoTerm = alpha(2)*(Fk./max(Fk(indx(~EdgesTriu))));
-    case 'sum'
-        TopoTerm = alpha(2)*(Fk./sum(Fk(indx(~EdgesTriu))));
-    end
-TopoTerm(isnan(TopoTerm)) = 0;TopoTerm(isinf(TopoTerm)) = 0;
-Ff = (Fd+TopoTerm).*~A;
+Kf(isinf(Kf)) = 0;
+Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
+Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
+Ff = (Fd+Fk).*~A;
 
 P = Ff(indx);
 
@@ -661,35 +576,22 @@ for ii = (mseed + 1):m
             K(j,vv) = K(vv,j);
         end
     end
-    
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
-
+    Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
     switch mv2
         case 'powerlaw'
-            Fk = K.^gam;
+            Kf = K.^gam;
         case 'exponential'       
-            Fk = exp(gam*K);    
+            Kf = exp(gam*K);    
     end
-    Fk(isinf(Fk)) = 0;
-    switch normType
-    case 'max'
-        TopoTerm = alpha(2)*(Fk./max(Fk(indx(~EdgesTriu))));
-    case 'sum'
-        TopoTerm = alpha(2)*(Fk./sum(Fk(indx(~EdgesTriu))));
-    end
-    TopoTerm(isnan(TopoTerm)) = 0;TopoTerm(isinf(TopoTerm)) = 0;
-    Ff = (Fd+TopoTerm).*~A;
+    Kf(isinf(Kf)) = 0;
+    Fk = alpha(2)*(Kf./max(max(Kf.*~A)));
+    Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
+    Ff = (Fd+Fk).*~A;
     P = Ff(indx);
-
 end
 b = indx(b);
 
-function b = fcn_sptl(A,D,m,eta,modelvar,PD,alpha,normType)
+function b = fcn_sptl(A,D,m,eta,modelvar,PD,alpha)
 n = length(D);
 mseed = nnz(A)/2;
 [u,v] = find(triu(ones(n),1));
@@ -716,12 +618,7 @@ switch mv3
     case 'exponential'       
         PDf = exp(eta(2)*(PD));    
 end
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
+Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
 
 P = Fd(indx).*~A(indx);
 
@@ -732,19 +629,14 @@ for i = (mseed + 1):m
 
     EdgesTriu(b(i)) = 1;
     
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
+    Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
     
     P = Fd(indx);
     P(b(1:i)) = 0;
 end
 b = indx(b);
 
-function b = fcn_com(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha,normType)
+function b = fcn_com(A,K,D,m,eta,gam,modelvar,epsilon,PD,alpha)
 
 K = K + epsilon;
 
@@ -774,12 +666,7 @@ switch mv3
     case 'exponential'       
         PDf = exp(eta(2)*(PD));    
 end
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
+Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
 switch mv2
     case 'powerlaw'
         Kf = K.^gam;
@@ -787,12 +674,7 @@ switch mv2
         Kf = exp(gam*K);    
 end
 Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
 Ff = (Fd+Fk).*~A;
 
@@ -811,12 +693,7 @@ for i = (mseed + 1):m
     A(uu,vv) = 1;
     A(vv,uu) = 1;
     K = gexpm(A)+epsilon;
-    switch normType
-    case 'max'
-        Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
-    case 'sum'
-        Fd = alpha(1)*(Df./sum(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./sum(PDf(indx(~EdgesTriu))));        
-    end
+    Fd = alpha(1)*(Df./max(Df(indx(~EdgesTriu)))) + alpha(3)*(PDf./max(PDf(indx(~EdgesTriu))));
     switch mv2
         case 'powerlaw'
             Kf = K.^gam;
@@ -824,12 +701,7 @@ for i = (mseed + 1):m
             Kf = exp(gam*(K));    
     end
     Kf(isinf(Kf)) = 0;
-    switch normType
-    case 'max'
-        Fk = alpha(2)*(Kf./max(Kf(indx(~EdgesTriu))));
-    case 'sum'
-        Fk = alpha(2)*(Kf./sum(Kf(indx(~EdgesTriu))));
-    end
+    Fk = alpha(2)*(Kf./max(max(Kf.*~A)));
     Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
     Ff = (Fd+Fk).*~A;
     P = Ff(indx);

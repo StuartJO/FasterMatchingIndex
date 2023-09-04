@@ -74,7 +74,6 @@ seed = zeros(Nnodes);
 
 % Make a pretend distance matrix. We don't need a real one because this is
 % a test of speed. 
-r = rand(Nnodes);
 D = A_dist;
 
 % Number of edges to generate. I chose 650 because that is a similar number
