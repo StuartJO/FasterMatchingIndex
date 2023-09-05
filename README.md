@@ -101,7 +101,7 @@ As mentioned above, the matching index is similarity in the _connectivity profil
 
 I would say that this definition isn't exactly consistent with what we would expect from Equation 1 (in my opinion), but it is exactly how Equation 2 is done (and how it is done in both the new and old code by default). I would argue that this definition/conceptualisation (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
-$$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
+$$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-(N_{ij}-A_{ij})}\tag {3}$$
 
 <sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected two. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index</sub>
 
