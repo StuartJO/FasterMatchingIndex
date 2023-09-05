@@ -10,7 +10,7 @@ $$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma
 
 where $\Gamma_{i}-{j}$ is the set of neighbours $N$ of node $i$ excluding node $j$ (if it is at all connected to node $j$). 
 
-<sub>* See the [section below](#what-did-you-mean-when-you-said-the-matching-index-may-not-measure-what-I-think-it-does) discussing how the matching index may not measure precisely what we usually think it does...</sub>
+<sub>* See the [section below](#what-did-you-mean-when-you-said-the-matching-index-may-not-measure-precisely-what-I-think-it-does) discussing how the matching index may not measure precisely what we usually think it does...</sub>
 
 ## So what is the problem?
 
