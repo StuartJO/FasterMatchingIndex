@@ -403,7 +403,7 @@ end
 b = indx(b);
 
 function b = fcn_matching(A,K,Fd,m,gam,modelvar,epsilon)
-%save('matching_testing.mat')
+
 A = A > 0;
 
 K = K + epsilon;
@@ -440,16 +440,16 @@ for ii = (mseed + 1):m
     uu = u(r);
     vv = v(r);
 
-    x = A(uu,:);
-    y = A(vv,:);
+    uu_nei = A(uu,:);
+    vv_nei = A(vv,:);
     
     A(uu,vv) = 1;
     A(vv,uu) = 1;
         
-    nei(uu,y) = nei(uu,y) + 1;
-    nei(y,uu) = nei(y,uu) + 1;
-    nei(vv,x) = nei(vv,x) + 1;
-    nei(x,vv) = nei(x,vv) + 1;
+    nei(uu,vv_nei) = nei(uu,vv_nei) + 1;
+    nei(vv_nei,uu) = nei(vv_nei,uu) + 1;
+    nei(vv,uu_nei) = nei(vv,uu_nei) + 1;
+    nei(uu_nei,vv) = nei(uu_nei,vv) + 1;
         
     degmat_sum(uu,:) = degmat_sum(uu,:)+1;
     degmat_sum(vv,:) = degmat_sum(vv,:)+1;
@@ -477,16 +477,16 @@ for ii = (mseed + 1):m
     % incorrect result.  
 
     % Below is an easier to read implementation of the computation
-    %
-    %     K = ( (nei.*2) ./ ( (degmat_sum<=2 & nei~=1) + ( degmat_sum - (A.*2) ) ) ) + epsilon;
-    %     
-    %     switch mv2
-    %         case 'powerlaw'
-    %             Fk = K.^gam;
-    %         case 'exponential'
-    %             Fk = exp(gam*K);
-    %     end
-
+    
+%         K = ( (nei.*2) ./ ( (degmat_sum<=2 & nei~=1) + ( degmat_sum - (A.*2) ) ) ) + epsilon;
+%         
+%         switch mv2
+%             case 'powerlaw'
+%                 Fk = K.^gam;
+%             case 'exponential'
+%                 Fk = exp(gam*K);
+%         end
+        
     % This part is the same as above but it only does the calculation for
     % nodes whose matching index has the potential to change. Gives a small
     % speed boost
@@ -496,7 +496,7 @@ for ii = (mseed + 1):m
 
     %all_nei = unique([uu vv find(x) find(y)]);
     
-    all_nei = [uu vv find(x) find(y)];
+    all_nei = [uu vv find(uu_nei) find(vv_nei)];
     
     switch mv2
         case 'powerlaw'
@@ -509,6 +509,7 @@ for ii = (mseed + 1):m
     Fk(all_nei,:) = Fk_update;    
     %K(:,all_nei) = K_update'; 
     Fk(:,all_nei) = Fk_update';  
+    
     
     Ff = Fd.*Fk.*~A;
     P = Ff(indx);

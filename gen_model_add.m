@@ -89,6 +89,8 @@ else
     nPDMs = size(PDMs,3);
 end
 
+PDMs=bsxfun(@times, ~eye(size(PDMs(:,:,1))), PDMs);
+
 if nPDMs == 1
     modelvar{1} = {modelvar{1}};
 end
@@ -166,10 +168,6 @@ switch modeltype
 
     case 'sptl'
         b = fcn_sptl(A,PDMs,m,PDMsParam,modelvar,normType);
-
-    case 'com'
-        Kseed = gexpm(A);
-        b = fcn_com(A,Kseed,PDMs,m,PDMsParam,TopoParam,modelvar,epsilon,normType);
 end
 
 B = zeros(n);
@@ -209,9 +207,9 @@ for j = 1:length(PDMsmv)
     Df = Df1(:,:,j);
     switch normType
     case 'max'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
     end
 end
 
@@ -226,9 +224,9 @@ end
 Kf(isinf(Kf)) = 0;
 switch normType
     case 'max'
-        Fk = TopoParam(2,1)*(Kf./max(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -291,9 +289,9 @@ for i = (mseed + 1):m
     
     switch mv2
         case 'powerlaw'
-            Fk = K.^TopoParam;
+            Fk = K.^TopoParam(1,1);
         case 'exponential'       
-            Fk = exp(TopoParam*K);    
+            Fk = exp(TopoParam(1,1)*K);    
     end
     Fk(isinf(Fk)) = 0;
     
@@ -301,7 +299,7 @@ for i = (mseed + 1):m
         case 'max'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
             end
             Fd = sum(PDf,3);
             MaxNorm = max(Fk.*~A,[],'all');
@@ -313,9 +311,9 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
             end
-            SumNorm = sum(sum(Fk.*~A))/2;
+            SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
                TopoTerm = 0; 
             else
@@ -361,9 +359,9 @@ for j = 1:length(PDMsmv)
     Df = Df1(:,:,j);
     switch normType
     case 'max'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
     end
 end
 
@@ -378,9 +376,9 @@ end
 Kf(isinf(Kf)) = 0;
 switch normType
     case 'max'
-        Fk = TopoParam(2,1)*(Kf./max(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -428,9 +426,9 @@ for i = (mseed + 1):m
         
     switch mv2
         case 'powerlaw'
-            Fk = K.^TopoParam;
+            Fk = K.^TopoParam(1,1);
         case 'exponential'       
-            Fk = exp(TopoParam*K);    
+            Fk = exp(TopoParam(1,1)*K);    
     end
     Fk(isinf(Fk)) = 0;
     
@@ -438,7 +436,7 @@ for i = (mseed + 1):m
         case 'max'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
             end
             Fd = sum(PDf,3);
             MaxNorm = max(Fk.*~A,[],'all');
@@ -450,9 +448,9 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
             end
-            SumNorm = sum(sum(Fk.*~A))/2;
+            SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
                TopoTerm = 0; 
             else
@@ -460,8 +458,9 @@ for i = (mseed + 1):m
             end
     end
         
-    P = Fd(indx) + TopoTerm(indx);
+    Fp = Fd + TopoTerm;
 
+    P = Fp(indx);
     P(b(1:i)) = 0;
     
 end
@@ -500,9 +499,9 @@ for j = 1:length(PDMsmv)
     Df = Df1(:,:,j);
     switch normType
     case 'max'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
     end
 end
 
@@ -517,9 +516,9 @@ end
 Kf(isinf(Kf)) = 0;
 switch normType
     case 'max'
-        Fk = TopoParam(2,1)*(Kf./max(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf(indx(~EdgesTriu))));
+        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -547,9 +546,9 @@ for i = (mseed + 1):m
 
     switch mv2
         case 'powerlaw'
-            Fk = K.^TopoParam;
+            Fk = K.^TopoParam(1,1);
         case 'exponential'       
-            Fk = exp(TopoParam*K);    
+            Fk = exp(TopoParam(1,1)*K);    
     end
     Fk(isinf(Fk)) = 0;
     
@@ -557,7 +556,7 @@ for i = (mseed + 1):m
         case 'max'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
             end
             Fd = sum(PDf,3);
             MaxNorm = max(Fk.*~A,[],'all');
@@ -569,9 +568,9 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
             end
-            SumNorm = sum(sum(Fk.*~A))/2;
+            SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
                TopoTerm = 0; 
             else
@@ -632,9 +631,9 @@ for j = 1:length(PDMsmv)
     Df = Df1(:,:,j);
     switch normType
     case 'max'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
     end
 end
 
@@ -759,15 +758,21 @@ for ii = (mseed + 1):m
     % If this was not there (i.e., only "degmat_sum<=2" was used) then an  
     % erroneous value of one will be added to the denominator, giving an
     % incorrect result.  
-            
-%     K = ( (nei.*2) ./ ( (degmat_sum<=2 & nei~=1) + ( degmat_sum - (A.*2) ) ) ) + epsilon;
-%     
+      
+    % This first instance of the code seems to be faster when there is ~120
+    % nodes or less. When overm use the alternative below
+    %if n < 120
+    
+%      K = ( (nei.*2) ./ ( (degmat_sum<=2 & nei~=1) + ( degmat_sum - (A.*2) ) ) ) + epsilon;
+%      
 %     switch mv2
 %         case 'powerlaw'
-%             Fk = K.^TopoParam;
+%             Fk = K.^TopoParam(1,1);
 %         case 'exponential'
-%             Fk = exp(TopoParam*K);
+%             Fk = exp(TopoParam(1,1)*K);
 %     end
+    
+    %else
 
     % Get the nodes to perform the calculation over. Simply find the nodes
     % which the edge was added between (uu vv) and all their neighbours
@@ -776,31 +781,37 @@ for ii = (mseed + 1):m
 
     % Due to the magic of indexing, we don't actually need to find the
     % unique set of neighbours and can include duplicates
-    
-    %nodes2use = unique([uu vv find(uu_nei) find(vv_nei)]);
-    
-    nodes2use = [uu vv find(uu_nei) find(vv_nei)];
-    
-    % Perform the matching calculation only for the node pairs which can
-    % actually be updated.
-    
+     
+%     %nodes2use = unique([uu vv find(uu_nei) find(vv_nei)]);
+     
+     nodes2use = [uu vv find(uu_nei) find(vv_nei)];
+     
+     % Perform the matching calculation only for the node pairs which can
+     % actually be updated.
+     
     switch mv2
         case 'powerlaw'
             Fk_update = ( (2 * nei(nodes2use,:) ./ ( (degmat_sum(nodes2use,:)<=2 & nei(nodes2use,:)~=1)+(degmat_sum(nodes2use,:) - (A(nodes2use,:) * 2)) ) ) + epsilon).^TopoParam(1,1);
         case 'exponential'
             Fk_update = exp(( (2 * nei(nodes2use,:) ./ ( (degmat_sum(nodes2use,:)<=2 & nei(nodes2use,:)~=1)+(degmat_sum(nodes2use,:) - (A(nodes2use,:) * 2)) ) ) + epsilon)*TopoParam(1,1));
     end
-        
-    % Add in the updated values to the Fk matrix
+%         
+%     % Add in the updated values to the Fk matrix
     Fk(nodes2use,:) = Fk_update;    
-    Fk(:,nodes2use) = Fk_update';     
+    Fk(:,nodes2use) = Fk_update'; 
         
+    %end
+    
     switch normType
         case 'max'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+                %PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
+                %X{j} = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
             end
+            %Y=sum(cat(3,X{:}),3);
+            
             Fd = sum(PDf,3);
             MaxNorm = max(Fk.*~A,[],'all');
             if MaxNorm == 0
@@ -811,9 +822,9 @@ for ii = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
             end
-            SumNorm = sum(sum(Fk.*~A))/2;
+            SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
                TopoTerm = 0; 
             else
@@ -855,9 +866,9 @@ for j = 1:length(PDMsmv)
     Df = Df1(:,:,j);
     switch normType
     case 'max'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df(indx(~EdgesTriu))));
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df(indx(~EdgesTriu))));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
     end
 end
 
@@ -876,9 +887,9 @@ for i = (mseed + 1):m
        Df = Df(:,:,j);
        switch normType        
         case 'max'
-            PDf(:,:,j) = PDMsParam(2,i)*(Df./max(Df(indx(~EdgesTriu))));
+            PDf(:,:,j) = PDMsParam(2,i)*(Df./max(Df.*~A,[],'all'));
         case 'sum'
-            PDf(:,:,j) = PDMsParam(2,i)*(Df./sum(Df(indx(~EdgesTriu))));      
+            PDf(:,:,j) = PDMsParam(2,i)*(Df./sum(Df.*~A,'all'));      
        end
     end
     Fd = sum(PDf,3);
