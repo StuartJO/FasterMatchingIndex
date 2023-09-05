@@ -158,7 +158,7 @@ switch modeltype
         
     case 'matching'
         Kseed = matching(A);
-        Kseed = Kseed + Kseed';
+        %Kseed = Kseed + Kseed';
         b = fcn_matching(A,Kseed,Fd,m,gam,modelvar,epsilon);
         
     case 'sptl'

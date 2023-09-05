@@ -100,7 +100,7 @@ end
 
 Fd = prod(Df,3);
 Kseed = matching(A);
-Kseed = Kseed + Kseed';
+
 [b,t] = fcn_matching(A,Kseed,Fd,m,gam,modelvar,epsilon);
         
 

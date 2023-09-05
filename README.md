@@ -4,7 +4,7 @@ This is code for computing the matching index much faster. This is of particular
 
 ## What is the matching index?
 
-The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles and this understood to be a normalised meaure of the overlap in two nodes neighbourhoods* (also not that everything discussed will apply to undirected, unweighted networks). The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
+The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles and this understood to be a normalised meaure of the overlap in two nodes neighbourhoods* (also note that everything discussed will apply to only undirected, unweighted networks). The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
 
 $$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}\tag {1}$$
 
@@ -48,11 +48,11 @@ You can see that the old way takes significantly longer when computing the index
 
 ## Yes that's neat Stuart, but what about its use in generative network models?
 
-An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes who will be affected by the newly added edge i.e., the loop very likely doesn't need to be run over all nodes. So because of this we won't see the some order of magnitude levels of improvement. But what improvement do we see? First lets just calculate the matching index using networks of a similar size and density I used in my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127). I generated 100 different models with the old and new code and compared the time it takes to compute them:
+An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes who will be affected by the newly added edge i.e., the loop very likely doesn't need to be run over all nodes. So because of this we won't see the same order of magnitude levels of improvement. But what improvement do we see? First lets just calculate the matching index model using a networks I used in my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127). I generated 100 different models with the old and new code and compared the time it takes to compute them (and also if they return a similar result):
 
 ![Box plots showing the time to generate 100 networks with the code and new code. The new code shows a significant advantage](./images/MatchingDemo2.svg)
 
-A fourfold speed-up is pretty good!
+A fourfold speed-up is pretty good! You can also see that the result (as determined by model fit AKA the energy function) is the practically the same.
 
 ## Ok, how does this change as a factor of the size of the network and the number of edges being requested?
 
@@ -66,11 +66,12 @@ You'll notice as the number of nodes increases, the new code gives bigger and bi
 
 Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. I thought this might be occuring as a factor of network density, so I went to two extremes. First I generated all 4950 edges for a network of size 100
 
+![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks of size 100 nodes with 1 to 4950 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo5.svg) 
 
 Then I generated all 124750 edges for a network of size 500:
 
-So there is some threshold
 
+The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested.
 
 I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
 
@@ -96,19 +97,21 @@ Node $i$ and $j$ share three neighbours (red nodes). The combined total of (uniq
 
 We would _technically_ be incorrect however, or rather we would have a different answer to what the code (both old and new) provides.
 
-As mentioned above, the matching index is similarity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the black edges, note the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$. 
+As mentioned above, the matching index is similarity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the black edges, note the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$.* 
 
 I would say that this definition isn't exactly consistent with what we would expect from Equation 1 (in my opinion), but it is exactly how Equation 2 is done (and how it is done in both the new and old code by default). I would argue that this definition/conceptualisation (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
 $$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 
+<sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected two. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index</sub>
+
 ## Do these differing conceptualisations affect anything?
 
-Not really. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok. May affect how you discuss and interpret this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the "matching.m" function, all the generative modelling functions at current can only use the connectivity profiles formulation).
+Not really. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). May affect how you discuss and interpret this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the "matching.m" function, all the generative modelling functions at current can only use the connectivity profiles formulation).
 
 ## I would like to incorporate these new ways of computing the matching index into my own code, is there an easy way to do this?
 
-Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is consistent with the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
+Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
 
 I have it for the multiplicative and additive formulation of the generative network model. 
 
@@ -118,7 +121,7 @@ Thank you, I appreciate it.
 
 ## Who or what should I cite for this implementation?
 
-This code is built off of [Betzel 2016](https://doi.org/10.1016/j.neuroimage.2015.09.041) and my own [paper](https://www.science.org/doi/10.1126/sciadv.abm6127), you can also references this GitHub.
+This code is built off of [Betzel 2016](https://doi.org/10.1016/j.neuroimage.2015.09.041) and my own [paper](https://www.science.org/doi/10.1126/sciadv.abm6127), you can (and probably _should_) also reference this GitHub.
 
 ## Who should I contact if I have questions/complaints? 
 

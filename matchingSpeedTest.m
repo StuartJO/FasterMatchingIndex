@@ -337,12 +337,12 @@ figure
 mean_new_time = mean(t);
 mean_old_time = mean(t_);
 
-subplot(1,3,1)
+subplot(1,3,2)
 plot(cumsum(mean_new_time))
 hold on
 plot(cumsum(mean_old_time))
 
-subplot(1,3,2)
+subplot(1,3,1)
 plot(mean_new_time)
 hold on
 plot(mean_old_time)
@@ -380,22 +380,20 @@ gam = .4;
 
 
 figure
-subplot(1,3,1)
+subplot(1,3,2)
 plot(cumsum(timecourse_new))
 hold on
 plot(cumsum(timecourse_old))
 
-Smoothing_factor = 1000;
+Smoothing_factor = 1;
 
-subplot(1,3,2)
+subplot(1,3,1)
 plot(movmean(timecourse_new,Smoothing_factor))
 hold on
 plot(movmean(timecourse_old,Smoothing_factor))
 
 subplot(1,3,3)
 plot(cumsum(timecourse_old)./cumsum(timecourse_new))
-
-
 
 save('matchingSpeedTestData6.mat')
 
