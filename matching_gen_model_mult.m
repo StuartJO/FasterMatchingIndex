@@ -1,7 +1,6 @@
 function [B,b,t] = matching_gen_model_mult(A,PD,m,modelvar,PDexpo,gam,epsilon)
-% gen_model_mult          Run generative model code for the multiplicative
-% model
-%
+%           Run generative model code for the multiplicative model
+% 
 %   Generates synthetic networks using the models described in the study by
 %   Betzel et al (2016) in Neuroimage.
 %
@@ -14,13 +13,12 @@ function [B,b,t] = matching_gen_model_mult(A,PD,m,modelvar,PDexpo,gam,epsilon)
 %                       and nPD is the number of PD matrices).
 %           m,          number of connections that should be present in
 %                       final synthetic network
-%           modeltype,  specifies the generative rule (see below)
 %           modelvar,   specifies whether the generative rules are based on
 %                       power-law or exponential relationship
 %                       ({'powerlaw'}|{'exponential})
 %           PDexpo,     the parameter controlling the values in PD. If
 %                       there are multipe PD matrices, PDexpo should be a
-%                       vector where each index gives the marameter for the
+%                       vector where each index gives the parameter for the
 %                       corresponding PD matrix
 %           gam,        the parameter controlling topology
 %           epsilon,    the baseline probability of forming a particular
@@ -31,26 +29,9 @@ function [B,b,t] = matching_gen_model_mult(A,PD,m,modelvar,PDexpo,gam,epsilon)
 %           B,          an adjacency matrix
 %           b,          a vector giving the index of each edge in B. Note
 %                       that the ordering of b shows which edges formed
-%                       first (e.g., b(1) was the fiorst edge to form, b(2)
+%                       first (e.g., b(1) was the first edge to form, b(2)
 %                       the second etc etc).
-%
-%   Full list of model types:
-%   (each model type realizes a different generative rule)
-%
-%       1.  'sptl'          spatial model
-%       2.  'neighbors'     number of common neighbors
-%       3.  'matching'      matching index
-%       4.  'clu-avg'       average clustering coeff.
-%       5.  'clu-min'       minimum clustering coeff.
-%       6.  'clu-max'       maximum clustering coeff.
-%       7.  'clu-diff'      difference in clustering coeff.
-%       8.  'clu-prod'      product of clustering coeff.
-%       9.  'deg-avg'       average degree
-%       10. 'deg-min'       minimum degree
-%       11. 'deg-max'       maximum degree
-%       12. 'deg-diff'      difference in degree
-%       13. 'deg-prod'      product of degree
-%       14. 'com'           communicability
+%           t,          the time in seconds it took do do each iteration
 %
 %       How to convert b to B:
 %       n = length(A); B = zeros(n); B(b(:,i)) = 1; B = B + B'; 

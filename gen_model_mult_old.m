@@ -1,30 +1,40 @@
 function [B,b] = gen_model_mult_old(A,PD,m,modeltype,modelvar,PDexpo,gam,epsilon)
 % GENERATIVE_MODEL          Run generative model code
 %
-%   B = GENERATIVE_MODEL(A,D,m,modeltype,modelvar,params)
-%
 %   Generates synthetic networks using the models described in the study by
 %   Betzel et al (2016) in Neuroimage.
 %
 %   Inputs:
 %           A,          binary network of seed connections
-%           D,          Euclidean distance/fiber length matrix
-%           O,          Other distance metrics, with each as the third
-%                       dimension in a matrix
+%           PD,         Euclidean distance/fiber length/node similarity
+%                       matrix. Multiple can be input either as a cell, 
+%                       where each cell contains a different matrix or as a
+%                       3D matrix (n*n*nPD, where n is the number of nodes
+%                       and nPD is the number of PD matrices).
 %           m,          number of connections that should be present in
 %                       final synthetic network
-%           modeltype,  specifies the generative rule (see below)
 %           modelvar,   specifies whether the generative rules are based on
 %                       power-law or exponential relationship
 %                       ({'powerlaw'}|{'exponential})
-%           eta,        the parameter controlling distance
+%           PDexpo,     the parameter controlling the values in PD. If
+%                       there are multipe PD matrices, PDexpo should be a
+%                       vector where each index gives the parameter for the
+%                       corresponding PD matrix
 %           gam,        the parameter controlling topology
 %           epsilon,    the baseline probability of forming a particular
 %                       connection (should be a very small number
-%                       {default = 1e-5}).
+%                       {default = 1e-6}).
 %
 %   Output:
 %           B,          an adjacency matrix
+%           b,          a vector giving the index of each edge in B. Note
+%                       that the ordering of b shows which edges formed
+%                       first (e.g., b(1) was the first edge to form, b(2)
+%                       the second etc etc).
+%           t,          the time in seconds it took do do each iteration
+%
+%       How to convert b to B:
+%       n = length(A); B = zeros(n); B(b(:,i)) = 1; B = B + B'; 
 %
 %
 %   Full list of model types:
@@ -43,37 +53,6 @@ function [B,b] = gen_model_mult_old(A,PD,m,modeltype,modelvar,PDexpo,gam,epsilon
 %       11. 'deg-max'       maximum degree
 %       12. 'deg-diff'      difference in degree
 %       13. 'deg-prod'      product of degree
-%       14. 'com'           communicability
-%
-%   Example usage:
-%
-%       load demo_generative_models_data
-%
-%       % get number of bi-directional connections
-%       m = nnz(A)/2;
-% 
-%       % get cardinality of network
-%       n = length(A);
-% 
-%       % set model type
-%       modeltype = 'neighbors';
-% 
-%       % set whether the model is based on powerlaw or exponentials
-%       modelvar = [{'powerlaw'},{'powerlaw'}];
-% 
-%       % choose some model parameters
-%       params = [-2,0.2; -5,1.2; -1,1.5];
-%       nparams = size(params,1);
-% 
-%       % generate synthetic networks
-%       B = generative_model(Aseed,D,m,modeltype,modelvar,params);
-%
-%       % store them in adjacency matrix format
-%       Asynth = zeros(n,n,nparams);
-%       for i = 1:nparams; 
-%           a = zeros(n); a(B(:,i)) = 1; a = a + a'; 
-%           Asynth(:,:,i) = a; 
-%       end
 %
 %   Reference: Betzel et al (2016) Neuroimage 124:1054-64.
 %

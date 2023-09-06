@@ -24,15 +24,15 @@ This likely makes you sad :cry:
 
 But what if I told you there was a way to make it (somewhat) better...
 
-## I'm interested now, why can it be made faster?
+## I'm interested now, how can it be made faster?
 
 To understand why it can be made faster, we need to talk more maths (sorry).
 
 We can also calculate the matching index as
 
-$$M_{ij} = \frac{2(N_{ij}-A_{ij})}{k_{i}+k_{j}-2A_{ij}}\tag {2}$$
+$$M_{ij} = \frac{2N_{ij}}{k_{i}+k_{j}-2A_{ij}}\tag {2}$$
 
-which is just the number of neighbours $i$ and $j$ share multiplied by two (whilst excluding themselves as neighbours of the other, that’s what the $-A_{ij}$ is for), then divided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$).
+which is just the number of nodes $N$ both $i$ and $j$ are connected to (i.e., the shared neighbours) multiplied by two, then divided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$; also note that $i$ and $j$ cannot be neighbours of each other).
 
 When written this way it is trivial* to see how the calculation could easily be done programmatically. If you look at the original code provided in the [BCT](https://sites.google.com/site/bctnet/), you'll notice it is actually calculating it the second way and not the first. However it is looping over all the nodes to calculate it. We can actually forgo any loops when calculating this measure resulting in a considerable speed up in processing speed.
 
@@ -101,13 +101,16 @@ As mentioned above, the matching index is similarity in the _connectivity profil
 
 I would say that this definition isn't exactly consistent with what we would expect from Equation 1 (in my opinion), but it is exactly how Equation 2 is done (and how it is done in both the new and old code by default). I would argue that this definition/conceptualisation (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
-$$M_{ij} = \frac{N_{ij}-A_{ij}}{k_{i}+k_{j}-2A_{ij}-(N_{ij}-A_{ij})}\tag {3}$$
+$$M_{ij} = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 
 <sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected two. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index</sub>
 
 ## Do these differing conceptualisations affect anything?
 
-Not really. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). May affect how you discuss and interpret this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the "matching.m" function, all the generative modelling functions at current can only use the connectivity profiles formulation).
+No. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). The measures are _almost_ perfectly correlated, and are clearly monotonically related. On average, normalised overlapping neighbourhood definition gives an answer 66.7% lower than the connectivity profiles definition
+ (so there is likely some non-linear mathematical relationship between them, but I am not going to figure that out).
+
+The different definitions may affect how you discuss this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the "matching.m" function, all the generative modelling functions at current can only use the connectivity profiles formulation).
 
 ## I would like to incorporate these new ways of computing the matching index into my own code, is there an easy way to do this?
 

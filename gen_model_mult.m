@@ -50,7 +50,6 @@ function [B,b] = gen_model_mult(A,PD,m,modeltype,modelvar,PDexpo,gam,epsilon)
 %       11. 'deg-max'       maximum degree
 %       12. 'deg-diff'      difference in degree
 %       13. 'deg-prod'      product of degree
-%       14. 'com'           communicability
 %
 %       How to convert b to B:
 %       n = length(A); B = zeros(n); B(b(:,i)) = 1; B = B + B'; 
