@@ -22,28 +22,32 @@ for i = 1:nNetSizes
     r_ = triu(r,1)+triu(r,1)';
     A = double(r_>(1-den));
     
-    % And because we only care about speed, don't need to write the output!
+    % In MATLAB it seems like the first time a script/function is called
+    % upon, it gets loaded into memory and this can take some time. Usually
+    % this is so small you would never noticed but I do notice it here when
+    % comparing timings and it throws them out somewhat! So on the first
+    % loop we just run it once to get it into memory
     
     if i == 1
-        matching(A); 
-        matching_ind_und(A);
+        m1 = matching(A); 
+        m2 = matching_ind_und(A);
     end
     
     for j = 1:Iters
               
         tic
-        matching_ind_und(A);
+        m2 = matching_ind_und(A);
         time_old(i,j) = toc;
 
         tic
-        matching(A);
+        m1 = matching(A);
         time_new(i,j) = toc;     
     end
     
     disp(['Completed nodes = ',num2str(Nnodes),', old method = ',num2str(mean(time_old(i,:))),' seconds, new method = ',num2str(mean(time_new(i,:))),' seconds'])
 end
 
-clear i j A r r_ Nnodes
+clear i j A r r_ Nnodes m1 m2
 
 save('matchingSpeedTestData1.mat')
 
@@ -77,6 +81,8 @@ ylabel('Speed up factor of new code')
 xlabel('Number of nodes in network')
 set(gca, 'FontSize', 18)
 xlim([min(NetSizes) max(NetSizes)])
+
+print('./images/MatchingDemo1.svg','-dsvg')
 
 clear all
 
@@ -185,6 +191,8 @@ ylabel('Model fit')
 set(gca,'FontSize',18)
 xlim([.5 2.5])
 
+print('./images/MatchingDemo2.svg','-dsvg')
+
 clear all
 
 %% Compare the matching generative network model with different number of nodes and edges
@@ -218,11 +226,11 @@ for i = 1:nNetSizes
         for k = 1:iters
 
         tic
-        gen_model_mult(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+        x = gen_model_mult(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
         time_new(i,j,k) = toc;
 
         tic
-        gen_model_mult_old(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+        y = gen_model_mult_old(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
         time_old(i,j,k) = toc;
         end  
         
@@ -231,7 +239,7 @@ for i = 1:nNetSizes
     end
 end
 
-clear a D Nnodes i j k Nedges
+clear a D Nnodes i j k Nedges x y
 
 mean_time_new = mean(time_new,3);
 mean_time_old = mean(time_old,3);
@@ -254,6 +262,8 @@ xlabel('Number of edges')
 ylabel('Number of nodes')
 c.Label.String = 'Average speed up compared to old';
 set(gca,'FontSize',24,'Ydir','normal')
+
+print('./images/MatchingDemo3.svg','-dsvg')
 
 clear all
 
@@ -368,8 +378,11 @@ for i = 1:nNetSizes
 end
 xlabel('Iteration/Edges')
 ylabel('Average speed up compared to old')
-legend(gca,lgd2,'NumColumns',1,'Location','northeast','FontSize',18)
+legend(gca,lgd2,'NumColumns',1,'Location','southeast','FontSize',18)
 set(gca,'FontSize',18)
+
+
+print('./images/MatchingDemo4.svg','-dsvg')
 
 clear all
 
@@ -458,6 +471,8 @@ title('Speed up factor')
 set(gca,'FontSize',14)
 xlim([1 Nedges])
 
+print('./images/MatchingDemo5.svg','-dsvg')
+
 clear all
 
 %%
@@ -522,5 +537,7 @@ ylabel('Speed up factor of new compared to old code')
 title('Speed up factor')
 set(gca,'FontSize',14)
 xlim([1 Nedges])
+
+print('./images/MatchingDemo6.svg','-dsvg')
 
 clear all

@@ -70,6 +70,7 @@ Here we can clearly see that as more edges need to be made, the code slows down,
 
 Then I generated all 124750 edges for a network of size 500:
 
+![Line plots showing the speed of the old and new code implementation of the matching generative network model for a network of size 500 nodes with 1 to 124750 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo6.svg) 
 
 The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested.
 

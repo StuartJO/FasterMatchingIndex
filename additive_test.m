@@ -45,16 +45,16 @@ maxKS_old = zeros(iters,1);
 % 
 % [B,b] = gen_model_add(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
 % 
-parfor i = 1:iters
+for i = 1:iters
 tic
-B_ = gen_model_add(seed,{D},Nedges,'neighbors',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
+B_ = gen_model_add(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
 time_new(i) = toc;
 [maxKS_new(i)] = calc_maxKS(A_vals,D,B_); 
 end
 
-parfor i = 1:iters
+for i = 1:iters
 tic
-B = gen_model_add_old_(seed,{D},Nedges,'neighbors',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
+B = gen_model_add_old_(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
 time_old(i) = toc;    
 [maxKS_old(i)] = calc_maxKS(A_vals,D,B);
 end
