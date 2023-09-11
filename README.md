@@ -58,17 +58,21 @@ A fourfold speed-up is pretty good! You can also see that the result (as determi
 
 To see how the speed of the codes changes under different node sizes and edge counts, we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
 
-![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo4.svg) 
+![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo3.svg) 
 
 Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. I thought this might be occuring as a factor of network density, so I went to two extremes. First I generated all 4950 edges for a network of size 100
 
-![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks of size 100 nodes with 1 to 4950 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo5.svg) 
+![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks of size 100 nodes with 1 to 4950 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo4.svg) 
 
 Then I generated all 124750 edges for a network of size 500:
 
-![Line plots showing the speed of the old and new code implementation of the matching generative network model for a network of size 500 nodes with 1 to 124750 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo6.svg) 
+![Line plots showing the speed of the old and new code implementation of the matching generative network model for a network of size 500 nodes with 1 to 124750 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo5.svg) 
 
 The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested. I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
+
+For the additive model, the speed up is not quite as drastic. This is because each step involves an additional normalisation which slows things down.
+
+![Box plots showing the time to generate 100 networks with the code and new code for the additive formulation. The new code shows an advantage](./images/AdditiveDemo.svg)
 
 ## I want to see this with my own eyes
 
@@ -78,7 +82,7 @@ Easy! Just run the script I wrote to demonstrate this in MATLAB
 matchingSpeedTest.m
 ```
 
-Note it does use the Parallel Computing Toolbox, just to speed things up a bit. It still takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI 
+It  takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI
 
 ## What did you mean when you said the matching index may not measure precisely what I think it does?
 
@@ -105,13 +109,13 @@ $$M_{ij} = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 No. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). The measures are _almost_ perfectly correlated, and are clearly monotonically related. On average, normalised overlapping neighbourhood definition gives an answer 66.7% lower than the connectivity profiles definition
  (so there is likely some non-linear mathematical relationship between them, but I am not going to figure that out).
 
-The different definitions may affect how you discuss this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the "matching.m" function, all the generative modelling functions at current can only use the connectivity profiles formulation).
+The different definitions may affect how you discuss this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the matching.m function, all the generative modelling functions at current can only use the connectivity profiles formulation).
 
 ## I would like to incorporate these new ways of computing the matching index into my own code, is there an easy way to do this?
 
 Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
 
-I have it for the multiplicative and additive formulation of the generative network model. 
+I have it for the multiplicative and additive formulation of the generative network model. See the scripts matchingSpeedTest.m and additiveSpeedTest.m for examples
 
 ## Wow this is so great, you're amazing Stuart
 

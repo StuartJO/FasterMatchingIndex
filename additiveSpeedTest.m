@@ -31,6 +31,8 @@ A_vals{4} = D(triu(A,1) > 0);
 maxKS_new = zeros(iters,1);
 maxKS_old = zeros(iters,1);
 
+B_ = gen_model_add(seed,{D},1,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
+
 for i = 1:iters
 tic
 B_ = gen_model_add(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
@@ -38,12 +40,18 @@ time_new(i) = toc;
 [maxKS_new(i)] = calc_maxKS(A_vals,D,B_); 
 end
 
+B = gen_model_add_old(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
+
 for i = 1:iters
 tic
 B = gen_model_add_old(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[-.21,1],[.21;3.96],'max');
 time_old(i) = toc;    
 [maxKS_old(i)] = calc_maxKS(A_vals,D,B);
 end
+
+clear B B_ i
+
+save('additiveSpeedTestData.mat')
 
 %
 
@@ -96,3 +104,4 @@ ylabel('Model fit')
 set(gca,'FontSize',18)
 xlim([.5 2.5])
 
+print('./images/AdditiveDemo.svg','-dsvg')
