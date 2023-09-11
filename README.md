@@ -4,7 +4,7 @@ This is code for computing the matching index much faster. This is of particular
 
 ## What is the matching index?
 
-The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles and this understood to be a normalised meaure of the overlap in two nodes neighbourhoods* (also note that everything discussed will apply to only undirected, unweighted networks). The index is calculated on an adjacency matrix $A$, and is mathematically defined as:
+The matching index, as typically used, is a measure that quantifies the similarity in two nodes connectivity profiles and this understood to be a normalised meaure of the overlap in two nodes neighbourhoods* (also note that everything discussed will apply to only undirected, unweighted networks). The matching index $M_{ij}$ is definied for a pair of nodes $i$ and $j$. It is calculated on on an adjacency matrix $A$, and can be mathematically as follows:
 
 $$M_{ij} = \frac{|\Gamma_{i}-{j}\cap \Gamma_{j}-{i}|}{|\Gamma_{i}-{j}\cup \Gamma_{j}-{i}|}\tag {1}$$
 
@@ -22,7 +22,7 @@ It takes agesssssssssssssssssssssss to run (in my experience I could run every s
 
 This likely makes you sad :cry:
 
-But what if I told you there was a way to make it (somewhat) better...
+But what if I told you there was a way to make it better...
 
 ## I'm interested now, how can it be made faster?
 
@@ -80,9 +80,10 @@ Easy! Just run the script I wrote to demonstrate this in MATLAB
 
 ```
 matchingSpeedTest.m
+additiveSpeedTest.m
 ```
 
-It  takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI
+It takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI
 
 ## What did you mean when you said the matching index may not measure precisely what I think it does?
 
@@ -115,7 +116,7 @@ The different definitions may affect how you discuss this measure though. The co
 
 Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
 
-I have it for the multiplicative and additive formulation of the generative network model. See the scripts matchingSpeedTest.m and additiveSpeedTest.m for examples
+I have it for the multiplicative and additive formulation of the generative network model. See the scripts matchingSpeedTest.m and additiveSpeedTest.m for examples of its use.
 
 ## Wow this is so great, you're amazing Stuart
 

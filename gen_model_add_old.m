@@ -18,16 +18,15 @@ function [B,b] = gen_model_add_old(A,PDMs,m,modeltype,modelvar,PDMsParam,TopoPar
 %           modelvar,   specifies whether the generative rules are based on
 %                       power-law or exponential relationship
 %                       ({'powerlaw'}|{'exponential})
-%           PDexpo,     the parameter controlling the values in PDMs. If
-%                       there are multipe PD matrices, PDexpo should be a
-%                       vector where each index gives the marameter for the
-%                       corresponding PD matrix
-%           TopoParam,        the parameter controlling topology
-%           alpha,      the parameter controlling alpha values, should be a
-%                       1*3 vector. alpha(1) is the alpha value for the
-%                       first PD matrix (should set to 1), alpha(2) is the
-%                       value for the topology term, and alpha(3) is for
-%                       the second PD matrix
+%           PDMsParam,  the parameters controlling the values in PDMs. 
+%                       PDMsParam(1,:) are the exponent values (i.e., the
+%                       parameter in the power-law or exponential). The
+%                       index of each column corresponds to the index in
+%                       PDMs. PDMsParam(2,:) are the alpha values                       
+%           TopoParam,  the parameters controlling the topological term. 
+%                       TopoParam(1,1) are the exponent values (i.e., the
+%                       parameter in the power-law or exponential). The
+%                       TopoParam(2,1) are the alpha values 
 %           normType,   either 'max' or 'sum', this will be the type of
 %                       normalisation performed within each respective
 %                       term. The default is 'max'
