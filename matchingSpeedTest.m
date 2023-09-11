@@ -197,75 +197,72 @@ clear all
 
 %% Compare the matching generative network model with different number of nodes and edges
 
-% NetSizes = 100:100:500;
-% NetEdges = 250:250:1250;
-
-NetSizes = [100 250 500 1000 2000];
-NetEdges = 500:500:2500;
-
-iters = 10;
-nNetSizes = length(NetSizes);
-nNetEdges = length(NetEdges);
-
-time_new = zeros(nNetSizes,nNetEdges,iters);
-time_old = zeros(nNetSizes,nNetEdges,iters);
-eta = -2;
-gam = .4;
-
-for i = 1:nNetSizes
-    
-    Nnodes = NetSizes(i);
-    a = zeros(Nnodes);
-    D = rand(Nnodes);
-    D = triu(D,1)+triu(D,1)';
-
-    for j = 1:nNetEdges
-        
-        Nedges = NetEdges(j);
-        
-        for k = 1:iters
-
-        tic
-        x = gen_model_mult(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
-        time_new(i,j,k) = toc;
-
-        tic
-        y = gen_model_mult_old(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
-        time_old(i,j,k) = toc;
-        end  
-        
-        disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,j,:))),' seconds, new method = ',num2str(mean(time_new(i,j,:))),' seconds'])
-        
-    end
-end
-
-clear a D Nnodes i j k Nedges x y
-
-mean_time_new = mean(time_new,3);
-mean_time_old = mean(time_old,3);
-
-AverageSpeedUp = mean_time_old./mean_time_new;
-
-save('matchingSpeedTestData3.mat')
-
-%
-
-figure('Position',[314   364   750   617])
-imagesc(AverageSpeedUp)
-c = colorbar;
-xticks(1:5)
-yticks(1:5);
-
-xticklabels(NetEdges)
-yticklabels(NetSizes)
-xlabel('Number of edges')
-ylabel('Number of nodes')
-c.Label.String = 'Average speed up compared to old';
-set(gca,'FontSize',24,'Ydir','normal')
-
-print('./images/MatchingDemo3.svg','-dsvg')
-
-clear all
+% NetSizes = [100 250 500 1000 2000];
+% NetEdges = 500:500:2500;
+% 
+% iters = 10;
+% nNetSizes = length(NetSizes);
+% nNetEdges = length(NetEdges);
+% 
+% time_new = zeros(nNetSizes,nNetEdges,iters);
+% time_old = zeros(nNetSizes,nNetEdges,iters);
+% eta = -2;
+% gam = .4;
+% 
+% for i = 1:nNetSizes
+%     
+%     Nnodes = NetSizes(i);
+%     a = zeros(Nnodes);
+%     D = rand(Nnodes);
+%     D = triu(D,1)+triu(D,1)';
+% 
+%     for j = 1:nNetEdges
+%         
+%         Nedges = NetEdges(j);
+%         
+%         for k = 1:iters
+% 
+%         tic
+%         x = gen_model_mult(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+%         time_new(i,j,k) = toc;
+% 
+%         tic
+%         y = gen_model_mult_old(a,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
+%         time_old(i,j,k) = toc;
+%         end  
+%         
+%         disp(['Completed nodes = ',num2str(Nnodes),', edges = ',num2str(Nedges),', old method = ',num2str(mean(time_old(i,j,:))),' seconds, new method = ',num2str(mean(time_new(i,j,:))),' seconds'])
+%         
+%     end
+% end
+% 
+% clear a D Nnodes i j k Nedges x y
+% 
+% mean_time_new = mean(time_new,3);
+% mean_time_old = mean(time_old,3);
+% 
+% AverageSpeedUp = mean_time_old./mean_time_new;
+% 
+% save('matchingSpeedTestData3.mat')
+% 
+% %
+% 
+% figure('Position',[314   364   750   617])
+% imagesc(AverageSpeedUp)
+% c = colorbar;
+% xticks(1:5)
+% yticks(1:5);
+% 
+% xticklabels(NetEdges)
+% yticklabels(NetSizes)
+% xlabel('Number of edges')
+% ylabel('Number of nodes')
+% c.Label.String = 'Average speed up compared to old';
+% set(gca,'FontSize',24,'Ydir','normal')
+% 
+% print('./images/MatchingDemo3.svg','-dsvg')
+% 
+% clear all
 
 %% Compare the matching generative network model with the old and new code
 

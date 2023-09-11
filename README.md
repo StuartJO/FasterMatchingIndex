@@ -56,11 +56,7 @@ A fourfold speed-up is pretty good! You can also see that the result (as determi
 
 ## Ok, how does this change as a factor of the size of the network and the number of edges being requested?
 
-Below I generated networks of different node sizes and edge counts:
-
-![Heat-map showing the speed-up factor of the new code vs old code for networks of different sizes (in both nodes and edge count)](./images/MatchingDemo3.svg) 
-
-You'll notice as the number of nodes increases, the new code gives bigger and bigger benefits. You will also notice, as the number of edges increases, the improvement of the new codes lessens (but it is much still better). To try to better understand why the impact of the new code lessens as more edges are added we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
+To see how the speed of the codes changes under different node sizes and edge counts, we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
 
 ![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo4.svg) 
 
@@ -72,9 +68,7 @@ Then I generated all 124750 edges for a network of size 500:
 
 ![Line plots showing the speed of the old and new code implementation of the matching generative network model for a network of size 500 nodes with 1 to 124750 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo6.svg) 
 
-The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested.
-
-I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
+The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested. I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
 
 ## I want to see this with my own eyes
 
