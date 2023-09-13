@@ -60,7 +60,9 @@ To see how the speed of the codes changes under different node sizes and edge co
 
 ![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo3.svg) 
 
-Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. I thought this might be occuring as a factor of network density, so I went to two extremes. First I generated all 4950 edges for a network of size 100
+Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. The speed up also appears to be maximal for a network of 200-250 nodes:
+
+I thought this might be occuring as a factor of network density, so I went to two extremes. First I generated all 4950 edges for a network of size 100:
 
 ![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks of size 100 nodes with 1 to 4950 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo4.svg) 
 

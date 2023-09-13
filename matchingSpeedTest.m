@@ -198,11 +198,9 @@ clear all
 %% Compare the matching generative network model with the old and new code
 
 NetSizes = [100 250 500 1000 2000];
-NetEdges = 500:500:2500;
 
 iters = 10;
 nNetSizes = length(NetSizes);
-nNetEdges = length(NetEdges);
 
 time_new = zeros(nNetSizes,iters);
 time_old = zeros(nNetSizes,iters);
@@ -213,8 +211,12 @@ timecourse_old = cell(nNetSizes,1);
 eta = -2;
 gam = .4;
 
-b1 = matching_gen_model_mult(a,{D},1,{'exponential','powerlaw'},eta,gam);
-b2 = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
+a = zeros(10);
+D = rand(10);
+D = triu(D,1)+triu(D,1)';
+
+b1 = matching_gen_model_mult(a,{D},10,{'exponential','powerlaw'},eta,gam);
+b2 = matching_gen_model_mult_old(a,{D},10,{'exponential','powerlaw'},eta,gam);
 
 for i = 1:nNetSizes
     
