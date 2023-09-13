@@ -421,8 +421,6 @@ D = triu(r,1)+triu(r,1)';
 % Number of edges to generate.
 Nedges = 124750;
 
-% Number of iterations to perform
-
 eta = -2;
 gam = .4;
 
