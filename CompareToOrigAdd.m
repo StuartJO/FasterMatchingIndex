@@ -38,10 +38,8 @@ B = gen_model_add_normmax(A,D,Nedges+1,'matching',{'exponential','powerlaw','pow
 
 
 for i = 1:iters
-    %param = P{3}(i,1:3);
-    param = [eta gam alpha];
 tic
-B_ = gen_model_add(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[param(1),1],[param(2);param(3)],'max');
+B_ = gen_model_add(seed,{D},Nedges,'matching',{'exponential','powerlaw'},[eta,1],[gam;alpha],'max');
 time_new(i) = toc;
 [maxKS_new(i)] = calc_maxKS(A_vals,D,B_); 
 end
@@ -57,3 +55,52 @@ end
 clear B B_ i
 
 %save('additiveSpeedTestData.mat')
+
+jitterOffset = .5;
+
+figure('Position',[232 262 1040  583])
+subplot(1,2,1)
+%boxchart([time_new time_old])
+cmap = lines(2);
+jitter = (rand(length(time_new),1)-.5)*jitterOffset;
+x=ones(length(time_new),1);
+scatter(x+jitter,time_new,'filled','MarkerFaceColor',cmap(1,:),'MarkerFaceAlpha',0.6);
+hold on
+jitter = (rand(length(time_old),1)-.5)*jitterOffset;
+x=ones(length(time_old),1)*2;
+scatter(x+jitter,time_old,'filled','MarkerFaceColor',cmap(2,:),'MarkerFaceAlpha',0.6);
+
+plotjitterOffset = jitterOffset/2;
+
+plot([1-plotjitterOffset 1+plotjitterOffset],[mean(time_new) mean(time_new)],'LineWidth',2,'Color','k')
+plot([2-plotjitterOffset 2+plotjitterOffset],[mean(time_old) mean(time_old)],'LineWidth',2,'Color','k')
+
+AverageSpeedUp = mean(time_old)/mean(time_new);
+title(['Mean speed up = ',num2str(AverageSpeedUp)])
+ylabel('Time in seconds')
+xticks(1:2)
+xticklabels({'New code','Old code'})
+set(gca,'FontSize',18)
+xlim([.5 2.5])
+
+subplot(1,2,2)
+%boxchart([maxKS_new maxKS_old])
+cmap = lines(2);
+jitter = (rand(length(maxKS_new),1)-.5)*jitterOffset;
+x=ones(length(maxKS_new),1);
+scatter(x+jitter,maxKS_new,'filled','MarkerFaceColor',cmap(1,:),'MarkerFaceAlpha',0.6);
+hold on
+jitter = (rand(length(maxKS_old),1)-.5)*jitterOffset;
+x=ones(length(maxKS_old),1)*2;
+scatter(x+jitter,maxKS_old,'filled','MarkerFaceColor',cmap(2,:),'MarkerFaceAlpha',0.6);
+
+plotjitterOffset = jitterOffset/2;
+
+plot([1-plotjitterOffset 1+plotjitterOffset],[mean(maxKS_new) mean(maxKS_new)],'LineWidth',2,'Color','k')
+plot([2-plotjitterOffset 2+plotjitterOffset],[mean(maxKS_old) mean(maxKS_old)],'LineWidth',2,'Color','k')
+
+xticks(1:2)
+xticklabels({'New code','Old code'})
+ylabel('Model fit')
+set(gca,'FontSize',18)
+xlim([.5 2.5])

@@ -156,8 +156,8 @@ switch modeltype
         b = fcn_nghbrs(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'matching'
-        Kseed = matching_ind(A);
-        Kseed = Kseed + Kseed';
+        Kseed = matching(A);
+        %Kseed = Kseed + Kseed';
         b = fcn_matching(A,Kseed,D,m,eta,gam,modelvar,epsilon,PD,alpha);
 
     case 'sptl'
