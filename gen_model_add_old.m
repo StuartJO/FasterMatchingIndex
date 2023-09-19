@@ -202,7 +202,7 @@ for j = 1:length(PDMsmv)
         case 'powerlaw'
             Df1(:,:,j) = PDMs(:,:,j).^PDMsParam(1,j);
         case 'exponential'       
-            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j)));    
+            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j))).*~eye(n);                 
     end
     Df = Df1(:,:,j);
     switch normType
@@ -354,7 +354,7 @@ for j = 1:length(PDMsmv)
         case 'powerlaw'
             Df1(:,:,j) = PDMs(:,:,j).^PDMsParam(1,j);
         case 'exponential'       
-            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j)));    
+            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j))).*~eye(n);                 
     end
     Df = Df1(:,:,j);
     switch normType
@@ -495,7 +495,7 @@ for j = 1:length(PDMsmv)
         case 'powerlaw'
             Df1(:,:,j) = PDMs(:,:,j).^PDMsParam(1,j);
         case 'exponential'       
-            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j)));    
+            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j))).*~eye(n);                 
     end
     Df = Df1(:,:,j);
     switch normType
@@ -627,7 +627,7 @@ for j = 1:length(PDMsmv)
         case 'powerlaw'
             Df1(:,:,j) = PDMs(:,:,j).^PDMsParam(1,j);
         case 'exponential'       
-            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j)));    
+            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j))).*~eye(n);                 
     end
     Df = Df1(:,:,j);
     switch normType
@@ -785,7 +785,7 @@ for j = 1:length(PDMsmv)
         case 'powerlaw'
             Df1(:,:,j) = PDMs(:,:,j).^PDMsParam(1,j);
         case 'exponential'       
-            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j)));    
+            Df1(:,:,j) = exp(PDMsParam(1,j)*(PDMs(:,:,j))).*~eye(n);                 
     end
     Df = Df1(:,:,j);
     switch normType
