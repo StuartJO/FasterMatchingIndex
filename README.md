@@ -44,7 +44,7 @@ First, lets compare calculating the matching index on networks with different nu
 
 ![Line plots showing the performance of the old and new matching index code for networks of difference node sizes. It shows the plot in terms of total seconds, total seconds on a log scale, and relative performance increase of the new compared to the old](./images/MatchingDemo1.svg)
 
-You can see that the old way takes significantly longer when computing the index than the new way, and this time only increases as the network gets larger! So the benefits of using the new code gets considerably better as the network gets larger
+You can see that the old way takes significantly longer when computing the index than the new way, and this time only increases as the network gets larger! So the benefits of using the new code gets considerably better when a network has more nodes in it.
 
 ## Yes that's neat Stuart, but what about its use in generative network models?
 
@@ -56,7 +56,7 @@ A fourfold speed-up is pretty good! You can also see that the result (as determi
 
 ## Ok, how does this change as a factor of the size of the network and the number of edges being requested?
 
-To see how the speed of the codes changes under different node sizes and edge counts, we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network (it is just building upon the previous iteration). If we record the time it takes to do each iteration we can see how the improvement varies: 
+To see how the speed of the codes changes under different node sizes and edge counts, we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network using the seed of the previous iteration. If we record the time it takes to do each iteration we can see how the improvement varies: 
 
 ![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed up factor for the new code is shown in the other](./images/MatchingDemo3.svg) 
 
@@ -70,7 +70,7 @@ Then I generated all 124750 edges for a network of size 500:
 
 ![Line plots showing the speed of the old and new code implementation of the matching generative network model for a network of size 500 nodes with 1 to 124750 edges (the maximum density). The first plot shows the speed of each iteration, the second the cumulative time, the third is the speed up factor for the new code](./images/MatchingDemo5.svg) 
 
-The relative speed as compared to the old code seems to vary approximately with the desired density rather than the raw number of edges requested. I am not completely sure as to why the improvement lessens over time (might be something with having to index more and nodes on later iterations?). If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
+The relative speed as compared to the old code seems to vary approximately with the desired density (it gets slower as a more dense network is requested) more so than the raw number of edges requested (but that still seems to have an effect). I am not completely sure as to why the improvement lessens over time but think might be something with having to index more and nodes on later iterations. If anyone has any ideas would be interested to know! But putting this curious coding quirk case study aside, the new version is faster, particularly for the network scale generative network models tend to be used at.
 
 For the additive model, the speed up is not quite as drastic. This is because each step involves an additional normalisation which slows things down.
 
@@ -105,7 +105,7 @@ I would say that this definition isn't exactly consistent with what we would exp
 
 $$M_{ij} = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 
-<sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected two. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index</sub>
+<sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected two. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index.</sub>
 
 ## Do these differing conceptualisations affect anything?
 
@@ -119,7 +119,7 @@ The different definitions may affect how you discuss this measure though. The co
 
 ## I would like to incorporate these new ways of computing the matching index into my own code, is there an easy way to do this?
 
-Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)) 
+Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)). 
 
 I have it for the multiplicative and additive formulation of the generative network model. See the scripts matchingSpeedTest.m and additiveSpeedTest.m for examples of its use.
 
