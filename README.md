@@ -85,7 +85,7 @@ matchingSpeedTest.m
 additiveSpeedTest.m
 ```
 
-It takes well over 4 hours to run everything when using the Toolbox on an i7 6700k FYI
+It takes well over 4 hours to run everything on an i7 6700k FYI
 
 ## What did you mean when you said the matching index may not measure precisely what I think it does?
 
@@ -109,8 +109,11 @@ $$M_{ij} = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 
 ## Do these differing conceptualisations affect anything?
 
-No. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). The measures are _almost_ perfectly correlated, and are clearly monotonically related. On average, normalised overlapping neighbourhood definition gives an answer 66.7% lower than the connectivity profiles definition
- (so there is likely some non-linear mathematical relationship between them, but I am not going to figure that out).
+No. They will give different results as I showed above, but so long as the same calculation is being used throughout the analysis, it should be ok (and to clarify, if you have been using generative models to date you have almost certainly been implementing the connectivity profiles definition). The measures are _almost_ perfectly correlated, but do show a clear monotonic relationship: 
+
+![A scatter plot showing a comparison between values given by the connectivity profiles and normalised overlapping neighbourhood definitions. There is a perfect relationship between the measures because they are mathematically related](./images/matchingDefcomparison.svg)
+
+As you might expect, the two measures are mathematically related. The connectivity profiles definition i.e., Equation 2, can be multipied by $\frac{k_{i}+k_{j}-2A_{ij}}{2(k_{i}+k_{j}-2A_{ij}-N_{ij})}$ to get the normalised overlapping neighbourhood definition i.e., Equation 3 (and similarly you can invert this term to convert from the normalised overlapping neighbourhood to connectivity profiles definition).
 
 The different definitions may affect how you discuss this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the matching.m function, all the generative modelling functions at current can only use the connectivity profiles formulation).
 

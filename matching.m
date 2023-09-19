@@ -13,16 +13,25 @@ if nargin < 2
 end
 
 % Get the number of nodes n
-n = length(A);
+%n = length(A);
 
 % Calculate the neighbours for each pair of nodes
-nei = (A*A).*~eye(n);
+%nei = (A*A).*~eye(n);
+nei = (A*A);
 
 % Get the degree of each node, followed by the summed degree of each pair
 % of nodes
 deg = sum(A);
 
-degsum = (deg+deg').*~eye(n);
+%degsum = (deg+deg').*~eye(n);
+
+degsum = (deg+deg');
+
+% Originally I calculated the identity matrix and used that to set the
+% diagonal to zero. This meant in subsequent calculations, a nodes "self"
+% matching index would be 0. However, it really doesn't matter what it is
+% as we don't tend to use that value anyway. So to save some compute time,
+% we avoid calculating this matrix
 
 % Compute the matching index. 
 % To avoid dividing by zero we include the term (degsum<=2 & nei~=1). 

@@ -674,7 +674,7 @@ degmat_sum = degmat + degmat_;
 % degmat_sum = (deg+deg').*~eye(n);
 
 % Calculate the neighbor matrix nei by multiplying A with its transpose
-nei = (A*A).*~eye(n);
+nei = (A*A);
 
 % The additive form would look like this I think
     

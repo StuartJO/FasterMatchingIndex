@@ -429,7 +429,7 @@ deg = sum(A);
 degmat = repmat(deg,n,1);
 degmat_ = degmat';
 degmat_sum = degmat + degmat_;
-nei = (A*A).*~eye(n);
+nei = (A*A);
 
 for ii = (mseed + 1):m
 
