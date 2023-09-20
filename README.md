@@ -93,13 +93,13 @@ The matching index is commonly considered a normalised measure of the overlap of
 
 Consider the network below:
 
-![An example network to illustrate how the matching index is calculated. The matching index is being calculated between the two blue nodes (labelled i and j). They share three neighbours (red nodes). Their combined neighbourhood size is 10 (red nodes plus grey nodes). They also share six connections to neighbouring nodes (red edges), and have 13 total connections (red edges plus black edges). Note that by convention, direct connections between the nodes of interest (in this case the blue nodes) are discounted](./images/MatchingDemoNetwork.svg)
+![An example network to illustrate how the matching index is calculated. The matching index is being calculated between the two white nodes (labelled i and j). They share three neighbours (red nodes). Their combined neighbourhood size is 10 (red nodes plus blue nodes). They also share six connections to neighbouring nodes (red edges), and have 13 total connections (red edges plus blue edges). Note that by convention, direct connections between the nodes of interest (in this case the blue nodes) are discounted](./images/MatchingDemoNetwork.svg)
 
-Node $i$ and $j$ share three neighbours (red nodes). The combined total of (unique) neighbours $i$ and $j$ have is 10 (red and grey nodes), so we would assume the matching index of these nodes is $\frac{3}{10}$.
+Node $i$ and $j$ share three neighbours (red nodes). The combined total of (unique) neighbours $i$ and $j$ have is 10 (red and blue nodes), so we would assume the matching index of these nodes is $\frac{3}{10}$.
 
 We would _technically_ be incorrect however, or rather we would have a different answer to what the code (both old and new) provides.
 
-As mentioned above, the matching index is similarity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the black edges, note the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$.* 
+As mentioned above, the matching index is similarity in the _connectivity profiles_ of two nodes. This means the matching index is actually calculated as the number of connections a pair of nodes have to same neighbours, over the total number of connections those nodes have. So in the example above, as node $i$ and $j$ share three neighbours they have six connections in common (red edges). They have 13 connections in total (red edges plus the blue edges, note the connection between them is excluded by convention), so the matching index is $\frac{6}{13}$.* 
 
 I would say that this definition isn't exactly consistent with what we would expect from Equation 1 (in my opinion), but it is exactly how Equation 2 is done (and how it is done in both the new and old code by default). I would argue that this definition/conceptualisation (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
@@ -119,7 +119,7 @@ The different definitions may affect how you discuss this measure though. The co
 
 ## I would like to incorporate these new ways of computing the matching index into my own code, is there an easy way to do this?
 
-Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)). 
+Good news! I have written code which allows you to do this! The inputs and outputs should be very similar to what the BCT/Betzel implementation used (and is in a similar format to the code I wrote for my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127)). They aren't completely plug and play from what is provided in the BCT, but they should be easy to adapt.
 
 I have it for the multiplicative and additive formulation of the generative network model. See the scripts matchingSpeedTest.m and additiveSpeedTest.m for examples of its use.
 
