@@ -122,6 +122,9 @@ A_vals{4} = D(triu(A,1) > 0);
 maxKS_new = zeros(iters,1);
 maxKS_old = zeros(iters,1);
 
+B_ = gen_model_mult(seed,{D},1,'matching',{'exponential','powerlaw'},eta,gam);
+B = gen_model_mult_old(seed,{D},1,'matching',{'exponential','powerlaw'},eta,gam);
+
 for i = 1:iters
     tic
     B_ = gen_model_mult(seed,{D},Nedges,'matching',{'exponential','powerlaw'},eta,gam);
@@ -208,15 +211,15 @@ time_old = zeros(nNetSizes,iters);
 timecourse_new = cell(nNetSizes,1);
 timecourse_old = cell(nNetSizes,1);
 
-eta = -2;
-gam = .4;
+eta = -0.0663620917068697;
+gam = 0.268238489046537;
 
 a = zeros(10);
 D = rand(10);
 D = triu(D,1)+triu(D,1)';
 
-b1 = matching_gen_model_mult(a,{D},10,{'exponential','powerlaw'},eta,gam);
-b2 = matching_gen_model_mult_old(a,{D},10,{'exponential','powerlaw'},eta,gam);
+b1 = matching_gen_model_mult(a,{D},1,{'exponential','powerlaw'},eta,gam);
+b2 = matching_gen_model_mult_old(a,{D},1,{'exponential','powerlaw'},eta,gam);
 
 for i = 1:nNetSizes
     
@@ -341,11 +344,14 @@ iters = 10;
 total_time_new = zeros(iters,1);
 total_time_old = zeros(iters,1);
 
-eta = -2;
-gam = .4;
+eta = -0.0663620917068697;
+gam = 0.268238489046537;
 
 iter_time_new = zeros(iters,Nedges);
 iter_time_old = zeros(iters,Nedges);
+
+b = matching_gen_model_mult(a,{D},1,{'exponential','powerlaw'},eta,gam);
+b = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
 
 for i = 1:iters
 
@@ -362,7 +368,7 @@ end
 mean_iter_time_new = mean(iter_time_new);
 mean_iter_time_old = mean(iter_time_old);
 
-clear i a r D
+clear i a r D b
 
 
 
@@ -421,14 +427,17 @@ D = triu(r,1)+triu(r,1)';
 % Number of edges to generate.
 Nedges = 124750;
 
-eta = -2;
-gam = .4;
+eta = -0.0663620917068697;
+gam = 0.268238489046537;
+
+b = matching_gen_model_mult(a,{D},1,{'exponential','powerlaw'},eta,gam);
+b = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
 
 [~,~,timecourse_new] = matching_gen_model_mult(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
 
 [~,~,timecourse_old] = matching_gen_model_mult_old(a,{D},Nedges,{'exponential','powerlaw'},eta,gam);
 
-clear r D a
+clear r D a b 
 
 save('matchingSpeedTestData5.mat')
 
