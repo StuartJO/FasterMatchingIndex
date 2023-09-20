@@ -1,3 +1,5 @@
+% This just compares the new additive model to the same one I wrote from my
+% 2022 paper
 
 load('random200_data4topomdl.mat')
 
@@ -53,8 +55,6 @@ time_old(i) = toc;
 end
 
 clear B B_ i
-
-%save('additiveSpeedTestData.mat')
 
 jitterOffset = .5;
 

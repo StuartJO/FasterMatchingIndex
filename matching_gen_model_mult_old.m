@@ -1,7 +1,6 @@
 function [B,b,t] = matching_gen_model_mult_old(A,PD,m,modelvar,PDexpo,gam,epsilon)
 %           Run generative model code for the multiplicative model
 % 
-%
 %   Generates synthetic networks using the models described in the study by
 %   Betzel et al (2016) in Neuroimage.
 %
@@ -39,7 +38,7 @@ function [B,b,t] = matching_gen_model_mult_old(A,PD,m,modelvar,PDexpo,gam,epsilo
 %
 %
 %   Reference: Betzel et al (2016) Neuroimage 124:1054-64.
-%
+%   Oldham et al (2022) Science Advances 10.1126/sciadv.abm6127
 %   Richard Betzel, Indiana University/University of Pennsylvania, 2015
 %   Edited by Stuart Oldham, Monash University 2021, MCRI 2023
 

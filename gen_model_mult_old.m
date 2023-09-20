@@ -55,8 +55,10 @@ function [B,b] = gen_model_mult_old(A,PD,m,modeltype,modelvar,PDexpo,gam,epsilon
 %       13. 'deg-prod'      product of degree
 %
 %   Reference: Betzel et al (2016) Neuroimage 124:1054-64.
+%   Oldham et al (2022) Science Advances 10.1126/sciadv.abm6127
 %
 %   Richard Betzel, Indiana University/University of Pennsylvania, 2015
+%   Edited by Stuart Oldham, Monash University 2021, MCRI 2023
 
 if ~exist('epsilon','var')
     epsilon = 1e-6;

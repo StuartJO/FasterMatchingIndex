@@ -1,3 +1,4 @@
+%% COmpare different ways of defining the matching index
 
 % Set the desired number of nodes
 n = 1000;

@@ -3,7 +3,7 @@ function [B,b] = gen_model_add_old(A,PDMs,m,modeltype,modelvar,PDMsParam,TopoPar
 % model normalising by the max for each term
 %
 %   Generates synthetic networks using the models described in the study by
-%   Oldham et al (2022) in ????.
+%   Oldham et al (2022; 10.1126/sciadv.abm6127)
 %
 %   Inputs:
 %           A,          binary network of seed connections
@@ -63,7 +63,7 @@ function [B,b] = gen_model_add_old(A,PDMs,m,modeltype,modelvar,PDMsParam,TopoPar
 %       n = length(A); B = zeros(n); B(b(:,i)) = 1; B = B + B'; 
 %
 %   Reference: Betzel et al (2016) Neuroimage 124:1054-64.
-%              Oldham et al (2022) bioRixv
+%              Oldham et al (2022) Science Advances 10.1126/sciadv.abm6127
 %   Richard Betzel, Indiana University/University of Pennsylvania, 2015
 %   Edited by Stuart Oldham, Monash University 2021
 

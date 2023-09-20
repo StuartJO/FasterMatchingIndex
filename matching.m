@@ -12,8 +12,11 @@ if nargin < 2
     alt = 0;
 end
 
+% Make the network binary
+A = A > 0;
+
 % Get the number of nodes n
-%n = length(A);
+n = length(A);
 
 % Calculate the neighbours for each pair of nodes
 %nei = (A*A).*~eye(n);
@@ -62,3 +65,6 @@ elseif alt == 1
 m = (nei)./( (degsum<=2 & nei~=1) + (degsum-(A.*2)-nei)  );
     
 end
+
+% Remove ones from the diagonal
+m = m.*~eye(n);
