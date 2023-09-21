@@ -42,7 +42,7 @@ When written this way it is trivial* to see how the calculation could easily be 
 
 First, let's compare calculating the matching index on networks with different numbers of nodes:
 
-![Line plots showing the performance of the old and new matching index code for networks of different node sizes. It shows the plot in terms of total seconds, total seconds on a log scale, and relative performance increase of the new compared to the old](./images/MatchingDemo1.svg)
+![Line plots showing the performance of the old and new matching index code for networks of different node sizes. It shows the plot in terms of total seconds, total seconds on a log scale, and relative performance increase of the new compared to the old. The new code shows substantial (100-350x) improvement](./images/MatchingDemo1.svg)
 
 You can see that the old way takes significantly longer when computing the index than the new way, and this time only increases as the network gets larger! So the benefits of using the new code get considerably better when a network has more nodes in it.
 
@@ -50,7 +50,7 @@ You can see that the old way takes significantly longer when computing the index
 
 An important thing to note about generative network models is they _iteratively_ add edges. As I alluded to before, the new code largely benefits because it can calculate everything in one hit instead of needing to loop over all the nodes. In the old generative model node, at each iteration the loop to calculate the matching index only runs over nodes that will be affected by the newly added edge i.e., the loop very likely doesn't need to be run over all nodes. So because of this, we won't see the same order of magnitude levels of improvement. But what improvement do we see? First, let's just calculate the matching index model using a network I used in my [paper](https://www.science.org/doi/10.1126/sciadv.abm6127). I generated 100 different models with the old and new code and compared the time it takes to compute them (and also if they return a similar result):
 
-![Box plots showing the time to generate 100 networks with the code and new code. The new code shows a significant advantage](./images/MatchingDemo2.svg)
+![Box plots showing the time to generate 100 networks with the code and new code. It also shows the model fits of both code versions (to show they achieve the same result). The new code shows a significant advantage (4x speed-up)](./images/MatchingDemo2.svg)
 
 A fourfold speed-up is pretty good! You can also see that the result (as determined by model fit AKA the energy function) is the same.
 
@@ -58,7 +58,7 @@ A fourfold speed-up is pretty good! You can also see that the result (as determi
 
 To see how the speed of the codes changes under different node sizes and edge counts, we can exploit the fact the if you run a generative model for X edges, you will also have generated a network of 1 to X-1 edges as well, as each iteration is technically creating a new network using the seed of the previous iteration. If we record the time it takes to do each iteration we can see how the improvement varies: 
 
-![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed-up factor for the new code is shown in the other](./images/MatchingDemo3.svg) 
+![Line plots showing the speed of the old and new code implementations of the matching generative network model when making networks with 1 to 2500 edges for networks of size 100, 250, 500, 1000, and 2000. Absolute performance is shown in one plot, while the speed-up factor for the new code is shown in the other. The speed up at a minimum is 3x while at most it is nearly 8x. The maximum speed up appears to be for a network of size ~250 nodes.](./images/MatchingDemo3.svg) 
 
 Here we can clearly see that as more edges need to be made, the code slows down, but depending on the number of nodes it doesn't slow down at the same rate. The speed-up also appears to be maximal for a network of 200-250 nodes:
 
