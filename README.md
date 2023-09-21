@@ -34,7 +34,7 @@ $$M_{ij} = \frac{2N_{ij}}{k_{i}+k_{j}-2A_{ij}}\tag {2}$$
 
 which is just the number of nodes $N$ both $i$ and $j$ are connected to (i.e., the shared neighbours) multiplied by two, then divided by the summed degree $k$ of nodes $i$ and $j$ (whilst ignoring any connection that may exist between nodes $i$ and $j$; also note that $i$ and $j$ cannot be neighbours of each other).
 
-When written this way it is trivial* to see how the calculation could easily be done programmatically. If you look at the original code provided in the [BCT](https://sites.google.com/site/bctnet/), you'll notice it is actually calculating it the second way and not the first. However, it is looping over all the nodes to calculate it. We can actually forgo any loops when calculating this measure resulting in a considerable speed up in processing speed.
+When written this way it is trivial* to see how the calculation could easily be done programmatically. If you look at the original code provided in the [BCT](https://sites.google.com/site/bctnet/), you'll notice it is actually calculating it as per Equation 2 and not Equation 1. However, it is looping over all the nodes when performing its calculation. We can actually forgo any loops when calculating the matching index resulting in a considerable speed up in processing speed.
 
 <sub>* I've always wanted to say this haha. The reason it is trivial is because we can take advantage of matrix operations to compute this value (as the number of neighbours can be easily computed by taking the square of the matrix, and degree can very easily be obtained by just taking the sum. Stack this vector $n$ times, where $n$ is the number of nodes in the network, then simply add the transpose of this matrix to it et voila, you have a matrix where each element is the sum of those two nodes' respective degree)</sub>
 
@@ -52,7 +52,7 @@ An important thing to note about generative network models is they _iteratively_
 
 ![Box plots showing the time to generate 100 networks with the code and new code. The new code shows a significant advantage](./images/MatchingDemo2.svg)
 
-A fourfold speed-up is pretty good! You can also see that the result (as determined by model fit AKA the energy function) is practically the same.
+A fourfold speed-up is pretty good! You can also see that the result (as determined by model fit AKA the energy function) is the same.
 
 ## Ok, how does this change as a factor of the size of the network and the number of edges being requested?
 
@@ -138,3 +138,6 @@ You can email me at stuart.oldham@mcri.edu.au
 ## Is there a Python version?
 
 Ha no. I leave it as an exercise for the reader to figure that one out.
+
+
+<sub>Image for the social preview is by [starline on Freepik](https://www.freepik.com/free-vector/hand-drawn-zoom-effect-background_32972002.htm#query=speed%20lines&position=1&from_view=keyword&track=ais)</sub>
