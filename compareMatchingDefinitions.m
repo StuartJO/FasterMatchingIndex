@@ -41,19 +41,19 @@ m_NN = (nei)./( (degsum<=2 & nei~=1) + (degsum-(A.*2)-nei)  );
 figure
 
 scatter(triu2vec(m_CP,1),triu2vec(m_NN,1),'filled')
-xlabel('Matching (connectivity profiles)')
-ylabel('Matching (normalised neighbourhood)')
+xlabel('{\itM} (connectivity profiles)')
+ylabel('{\itM''} (normalised neighbourhood)')
 set(gca,'FontSize',14)
 
 print('./images/matchingDefcomparison.svg','-dsvg')
 
-% Convert m_CP to m_NN
+% Convert m_CP to m_NN the hard way
 
 CP2NN = (degsum - (A.*2) )./( 2*(degsum - (A.*2) - nei) );
 
 m_NN_cnv = m_CP.*CP2NN;
 
-% Convert m_NN to m_CP
+% Convert m_NN to m_CP the hard way
 
 NN2CP = ( 2*(degsum - (A.*2) - nei) )./ (degsum - (A.*2) );
 
@@ -62,3 +62,17 @@ m_CP_cnv = m_NN.*NN2CP;
 % Due to precision issues, MATLAB will think m_NN_cnv and m_NN (or m_CP_cnv
 % and m_CP) are different results, but I assure you they are exactly the
 % same. Break out the pen and paper if you do not believe me!
+
+% Convert m_CP to m_NN the easy way
+
+m_NN_cnv2 = 1./((2./m_CP)-1);
+
+% Convert m_NN to m_CP the easy way
+
+m_CP_cnv2 = (2*m_NN)./(m_NN+1);
+
+figure
+x = 0:0.00001:1; y = 1./((2./x)-1); plot(x, y,'Color','k','LineWidth',2);
+xlabel('{\itM} (connectivity profiles)')
+ylabel('{\itM''} (normalised neighbourhood)')
+set(gca,'FontSize',14)
