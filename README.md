@@ -103,7 +103,7 @@ As mentioned above, the matching index is similarity in the _connectivity profil
 
 I would say that this definition isn't exactly consistent with what we would expect from Equation 1 (in my opinion), but it is exactly how Equation 2 is done (and how it is done in both the new and old code by default). I would argue that this definition/conceptualisation (which I shall call the connectivity profiles definition) isn't the most intuitive. We can change Equation 2 to be more consistent with the intuitive conceptualisation (which I shall call the normalised overlapping neighbourhood definition) by doing the following
 
-$$M'_{ij} = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
+$$M_{ij}' = \frac{N_{ij}}{k_{i}+k_{j}-2A_{ij}-N_{ij}}\tag {3}$$
 
 <sub>* It might make more sense to think of this in terms of a connectivity matrix. Each row/column corresponds to a node, and that forms a vector indicating which other nodes it is connected to. If you compare any two rows/pairs, where they both have a one indicates a shared neighbour. This measure is also very similar to the Jaccard index.</sub>
 
@@ -113,7 +113,7 @@ No. They will give different results as I showed above, but so long as the same 
 
 ![A scatter plot showing a comparison between values given by the connectivity profiles and normalised overlapping neighbourhood definitions. There is a perfect relationship between the measures because they are mathematically related](./images/matchingDefcomparison.svg)
 
-As you might expect, the two measures are mathematically related. The connectivity profiles definition i.e., Equation 2, can be multiplied by $\frac{k_{i}+k_{j}-2A_{ij}}{2(k_{i}+k_{j}-2A_{ij}-N_{ij})}$ to get the normalised overlapping neighbourhood definition i.e., Equation 3 (and similarly you can invert this term to convert from the normalised overlapping neighbourhood to connectivity profiles definition). A simpler way to convert one measure to the other by $M'_{ij}=\frac{1}{\frac{2}{M_{ij}-1}$ or $M_{ij}=\frac{2M'_{ij}}{M'_{ij}+1}$ (Thanks Mehul!).
+As you might expect, the two measures are mathematically related. The connectivity profiles definition i.e., Equation 2, can be multiplied by $\frac{k_{i}+k_{j}-2A_{ij}}{2(k_{i}+k_{j}-2A_{ij}-N_{ij})}$ to get the normalised overlapping neighbourhood definition i.e., Equation 3 (and similarly you can invert this term to convert from the normalised overlapping neighbourhood to connectivity profiles definition). A simpler way to convert one measure to the other by $M_{ij}'=\frac{1}{\frac{2}{M_{ij}-1}$ or $M_{ij}=\frac{2M_{ij}''}{M_{ij}'+1}$ (Thanks Mehul!).
 
 The different definitions may affect how you discuss this measure though. The code I provided does the connectivity profiles definition by default, but does allow for the normalised overlapping neighbourhood definition to be done as well (note this is only done for the matching.m function, all the generative modelling functions at current can only use the connectivity profiles formulation).
 
