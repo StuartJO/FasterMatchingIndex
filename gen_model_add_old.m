@@ -209,7 +209,7 @@ for j = 1:length(PDMsmv)
     case 'max'
         PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));        
     end
 end
 
@@ -226,7 +226,7 @@ switch normType
     case 'max'
         Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
+        Fk = TopoParam(2,1)*(Kf./(sum(Kf.*~A,'all')/2));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -311,7 +311,7 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));
             end
             SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
@@ -361,7 +361,7 @@ for j = 1:length(PDMsmv)
     case 'max'
         PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));        
     end
 end
 
@@ -378,7 +378,7 @@ switch normType
     case 'max'
         Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
+        Fk = TopoParam(2,1)*(Kf./(sum(Kf.*~A,'all')/2));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -448,7 +448,7 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));
             end
             SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
@@ -502,7 +502,7 @@ for j = 1:length(PDMsmv)
     case 'max'
         PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));        
     end
 end
 
@@ -519,7 +519,7 @@ switch normType
     case 'max'
         Fk = TopoParam(2,1)*(Kf./max(Kf.*~A,[],'all'));
     case 'sum'
-        Fk = TopoParam(2,1)*(Kf./sum(Kf.*~A,'all'));
+        Fk = TopoParam(2,1)*(Kf./(sum(Kf.*~A,'all')/2));
 end
 
 Fk(isnan(Fk)) = 0;Fk(isinf(Fk)) = 0;
@@ -569,7 +569,7 @@ for i = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));
             end
             SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
@@ -634,7 +634,7 @@ for j = 1:length(PDMsmv)
     case 'max'
         PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));        
     end
 end
 
@@ -746,7 +746,7 @@ for ii = (mseed + 1):m
         case 'sum'
             for j = 1:length(PDMsmv)
                 Df = Df1(:,:,j);
-                PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));
+                PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));
             end
             SumNorm = sum(Fk.*~A,'all')/2;
             if SumNorm == 0
@@ -792,7 +792,7 @@ for j = 1:length(PDMsmv)
     case 'max'
         PDf(:,:,j) = PDMsParam(2,j)*(Df./max(Df.*~A,[],'all'));
     case 'sum'
-        PDf(:,:,j) = PDMsParam(2,j)*(Df./sum(Df.*~A,'all'));        
+        PDf(:,:,j) = PDMsParam(2,j)*(Df./(sum(Df.*~A,'all')/2));        
     end
 end
 
@@ -813,7 +813,7 @@ for i = (mseed + 1):m
         case 'max'
             PDf(:,:,j) = PDMsParam(2,i)*(Df./max(Df.*~A,[],'all'));
         case 'sum'
-            PDf(:,:,j) = PDMsParam(2,i)*(Df./sum(Df.*~A,'all'));      
+            PDf(:,:,j) = PDMsParam(2,i)*(Df./(sum(Df.*~A,'all')/2));      
        end
     end
     Fd = sum(PDf,3);
